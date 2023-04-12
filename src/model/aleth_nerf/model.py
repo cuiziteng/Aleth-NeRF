@@ -314,8 +314,8 @@ class LitAleth_NeRF(LitModel):
         #loss_control = helper.Exp_loss_global(mean_val=self.eta)(l_conceil_coarse) + helper.Exp_loss_global(mean_val=self.eta)(l_conceil_fine)   # twilight
         
         target = target.type(torch.FloatTensor).to(rgb_fine_dark.device)
-        #loss_structure = helper.Structure_Loss(contrast=0.5/self.eta)(target, rgb_coarse_light) + helper.Structure_Loss(contrast=0.5/self.eta)(target, rgb_fine_light)
-        loss_structure = helper.Structure_Loss(contrast=0.2/self.eta)(target, rgb_coarse_light) + helper.Structure_Loss(contrast=0.2/self.eta)(target, rgb_fine_light)
+        loss_structure = helper.Structure_Loss(contrast=0.5/self.eta)(target, rgb_coarse_light) + helper.Structure_Loss(contrast=0.5/self.eta)(target, rgb_fine_light)
+        #loss_structure = helper.Structure_Loss(contrast=0.2/self.eta)(target, rgb_coarse_light) + helper.Structure_Loss(contrast=0.2/self.eta)(target, rgb_fine_light)
         loss_cc = helper.colour(mean_rgb_coarse) + helper.colour(mean_rgb_fine)
         
         loss = loss1 + loss0  + 1e-4*loss_control + 1e-3*loss_structure + 1e-4*loss_cc   # dark

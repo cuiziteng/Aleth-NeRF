@@ -1,4 +1,4 @@
-# Aleth-NeRF: Low-light Condition View Synthesis with Concealing Fields
+# Aleth-NeRF: Low-light Condition View Synthesis with Concealing Fields [(Website)](https://cuiziteng.github.io/Aleth_NeRF_web/) [(ArXiv)](https://arxiv.org/abs/2303.05807)
 
 [Ziteng Cui<sup>1,2</sup>](https://cuiziteng.github.io/), 
 [Lin Gu<sup>3,2</sup>](https://sites.google.com/view/linguedu/home), 
@@ -28,8 +28,8 @@ Common capture low-light scenes are challenging for most computer vision techniq
 <div align="center">
   <img src="./pics/Fig1.png" height="300">
 </div>
-<p align="center">
-  <font size=1.0> We assume objects are naturally visible. However, the Concealing Field attenuates the light in the viewing direction, making the left user see a low-light scene. Aleth-NeRF takes a low-light image as input and unsupervisly learns the distribution of the Concealing Field. Then, we unconceal (alethia) the Concealing field to render the enhanced image.</font>
+<p align="left">
+  <font size=0.5> We assume objects are naturally visible. However, the Concealing Field attenuates the light in the viewing direction, making the left user see a low-light scene. Aleth-NeRF takes a low-light image as input and unsupervisly learns the distribution of the Concealing Field. Then, we unconceal (alethia) the Concealing field to render the enhanced image.</font>
 </p>
 
 <br/>
@@ -167,15 +167,15 @@ $ CUDA_VISIBLE_DEVICES=0,1,2,3 python3 run.py --ginc configs/LOM/compare_methods
 
 ## :smile: Others:
 
-If you want to editing the code or figure model details of Aleth-NeRF, direct refer to [model.py](src/model/aleth_nerf/model.py) and [helper.py](src/model/nerf/helper.py).
+If you want to editing the code or find out details of Aleth-NeRF, direct refer to [model.py](src/model/aleth_nerf/model.py) and [helper.py](src/model/nerf/helper.py).
 
 <br/>
 
-## Reference and Related Works:
+##  :book: Reference and Related Works:
 
 **Acknowledgement:**
 
-Code is based on [NeRF-Factory](https://github.com/kakaobrain/nerf-factory), much thanks to their excellent codebase. Also if you use **LOM** dataset or our code & paper help you, please consider cite our work:
+Code is based on [NeRF-Factory](https://github.com/kakaobrain/nerf-factory), much thanks to their excellent codebase! Also if you use **LOM** dataset or our code & paper help you, please consider cite our work:
 
 ```
 @misc{cui2023alethnerf,

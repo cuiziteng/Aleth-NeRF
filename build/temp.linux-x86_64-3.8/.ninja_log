@@ -1,0 +1,7 @@
+# ninja log v5
+3	52299	1665406863951089639	/home/mil/cui/NeRF-Factory/build/temp.linux-x86_64-3.8/lib/plenoxel/svox2.o	5365396ecf0dd0c
+2	100325	1665406912065086739	/home/mil/cui/NeRF-Factory/build/temp.linux-x86_64-3.8/lib/plenoxel/misc_kernel.o	912b853d95a33eb0
+2	100364	1665406912101086736	/home/mil/cui/NeRF-Factory/build/temp.linux-x86_64-3.8/lib/plenoxel/render_lerp_kernel_cuvol.o	4cf2af85f32b4329
+2	100451	1665406912189086731	/home/mil/cui/NeRF-Factory/build/temp.linux-x86_64-3.8/lib/plenoxel/optim_kernel.o	bcc58b39f3e5a7c
+1	101039	1665406912776086696	/home/mil/cui/NeRF-Factory/build/temp.linux-x86_64-3.8/lib/plenoxel/loss_kernel.o	db2df55857bdddf5
+2	101171	1665406912900086688	/home/mil/cui/NeRF-Factory/build/temp.linux-x86_64-3.8/lib/plenoxel/svox2_kernel.o	b026f9f30859353f

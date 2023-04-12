@@ -107,7 +107,7 @@ By default, we use 4 GPUs to train Aleth-NeRF on LOM dataset (around **3 hours ~
 $ CUDA_VISIBLE_DEVICES=0,1,2,3 python3 run.py --ginc configs/LOM/aleth_nerf/aleth_nerf_buu.gin --eta 0.1
 ```
 
-Here the hyper-parameter conceal degree "--eta" : "$\eta$" (see Sec.3.3 and Sec.C in our paper), is default set to 0.1 in "*buu*" and "*sofa*" scenes, to 0.05 in "*shrub*", "*chair*" and "*bike*" scenes.
+Here the hyper-parameter conceal degree "--eta" : $\eta$ (see Sec.3.3 and Sec.C in our paper), is default set to 0.1 in "*buu*" and "*sofa*" scenes, to 0.05 in "*shrub*", "*chair*" and "*bike*" scenes.
 
 Beyond, the "--overall_g" (adjust final render lightness, default 1.0) better set to 1.5 in "*bike*" and "*shrub*" scene. "*bike*" scene for example:
 

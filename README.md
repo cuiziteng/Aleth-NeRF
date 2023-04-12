@@ -68,7 +68,7 @@ We collect the first paired low and normal light multi-view images dataset, name
 
 LOM dataset contains 5 scenes (*buu* | *chair* | *sofa* | *bike* | *shrub*), each scene includes 25~65 paired multi-view normal-light and low-light images, and low-light images enhanced by different 2D low-light enhancement methods.
 
-Unzip the download file, place LOM under $data$ folder, then LOM dataset format as follow:
+Unzip the download file, place LOM under $./data$ folder, then LOM dataset format as follow:
 
 ```
 data     
@@ -123,7 +123,7 @@ $ bash run/run_LOM_aleth.sh
 
 ### (3). Evaluation with pre-train weights
 
-You could also download our pre-train weights for direct model evaluation [google drive](https://drive.google.com/file/d/142G9GBqNRY_QiiYYCXXe8tcC5GbeDzxV/view?usp=share_link) or [baiduyun (passwd:gkiw)](https://pan.baidu.com/s/1-NyB3rDYrcT6rSQ7O0eRmw), then unzip the file under this folder (./logs), final test each scene as follow:
+You could also download our pre-train weights for direct model evaluation [google drive](https://drive.google.com/file/d/142G9GBqNRY_QiiYYCXXe8tcC5GbeDzxV/view?usp=share_link) or [baiduyun (passwd:gkiw)](https://pan.baidu.com/s/1-NyB3rDYrcT6rSQ7O0eRmw), then unzip the file under this folder ($./logs$), final test each scene as follow:
 
 ```
 # buu

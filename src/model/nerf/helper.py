@@ -37,12 +37,12 @@ def sample_along_rays(
 ):
     bsz = rays_o.shape[0]
     t_vals = torch.linspace(0.0, 1.0, num_samples + 1, device=rays_o.device)
-    if lindisp:
+    if lindisp: # False
         t_vals = 1.0 / (1.0 / near * (1.0 - t_vals) + 1.0 / far * t_vals)
     else:
         t_vals = near * (1.0 - t_vals) + far * t_vals
 
-    if randomized:
+    if randomized:  # True
         mids = 0.5 * (t_vals[..., 1:] + t_vals[..., :-1])
         upper = torch.cat([mids, t_vals[..., -1:]], -1)
         lower = torch.cat([t_vals[..., :1], mids], -1)
@@ -64,37 +64,38 @@ def pos_enc(x, min_deg, max_deg):
 
 
 def volumetric_rendering(rgb, density, t_vals, dirs, white_bkgd):
-
     eps = 1e-10
 
     dists = torch.cat(
         [
-            t_vals[..., 1:] - t_vals[..., :-1],
+            t_vals[..., 1:] - t_vals[..., :-1], # Distance (Batch, 192)
             torch.ones(t_vals[..., :1].shape, device=t_vals.device) * 1e10,
         ],
         dim=-1,
-    )
-    dists = dists * torch.norm(dirs[..., None, :], dim=-1)
-    alpha = 1.0 - torch.exp(-density[..., 0] * dists)
+    ) 
+    dists = dists * torch.norm(dirs[..., None, :], dim=-1)  # 位置间隔信息 (Batch, 193) 
+    
+    alpha = 1.0 - torch.exp(-density[..., 0] * dists)  # Current Particle Density (Batch, 193)
+    
     accum_prod = torch.cat(
         [
             torch.ones_like(alpha[..., :1]),
-            torch.cumprod(1.0 - alpha[..., :-1] + eps, dim=-1),
+            torch.cumprod(1.0 - alpha[..., :-1] + eps, dim=-1), 
         ],
-        dim=-1,
+        dim=-1, 
     )
-
+    
     weights = alpha * accum_prod
-
+    
     comp_rgb = (weights[..., None] * rgb).sum(dim=-2)
     depth = (weights * t_vals).sum(dim=-1)
     acc = weights.sum(dim=-1)
     inv_eps = 1 / eps
-
-    if white_bkgd:
-        comp_rgb = comp_rgb + (1.0 - acc[..., None])
-
-    return comp_rgb, acc, weights
+    
+    # if white_bkgd:  # False
+    #     comp_rgb = comp_rgb + (1.0 - acc[..., None])
+    
+    return comp_rgb, depth, acc, weights
 
 
 def sorted_piecewise_constant_pdf(

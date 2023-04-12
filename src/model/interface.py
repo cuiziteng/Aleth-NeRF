@@ -33,6 +33,28 @@ class LitModel(pl.LightningModule):
             ret.append(all[curr : curr + h * w].reshape(h, w, 3))
             curr += h * w
         return ret
+    
+    # def alter_gather_cat_depth(self, outputs, key, image_sizes):
+    #     each = torch.cat([output[key] for output in outputs])
+    #     print(each.shape)
+    #     all = self.all_gather(each).detach()
+    #     print(all.shape)
+    #     all = all.permute((1, 0, 2)).flatten(0, 1)
+    #     ret, curr = [], 0
+    #     for (h, w) in image_sizes:
+    #         ret.append(all[curr : curr + h * w].reshape(h, w, 1))
+    #         curr += h * w
+    #     return ret
+
+    def alter_gather_cat_conceil(self, outputs, key, image_sizes):
+        each = torch.cat([output[key] for output in outputs])
+        all = self.all_gather(each).detach().squeeze(-1)
+        all = all.permute((1, 0, 2)).flatten(0, 1)
+        ret, curr = [], 0
+        for (h, w) in image_sizes:
+            ret.append(all[curr : curr + h * w].reshape(h, w, 193))
+            curr += h * w
+        return ret
 
     @torch.no_grad()
     def psnr_each(self, preds, gts):
@@ -73,6 +95,8 @@ class LitModel(pl.LightningModule):
     def psnr(self, preds, gts, i_train, i_val, i_test):
         ret = {}
         ret["name"] = "PSNR"
+        print(preds)
+        print(gts)
         psnr_list = self.psnr_each(preds, gts)
         ret["mean"] = psnr_list.mean().item()
         if self.trainer.datamodule.eval_test_only:
@@ -141,6 +165,6 @@ class LitModel(pl.LightningModule):
             image_dir = os.path.join(self.logdir, "render_video")
             os.makedirs(image_dir, exist_ok=True)
             store_image.store_image(image_dir, rgbs)
-            store_image.store_video(image_dir, rgbs, None)
+            store_image.store_video(image_dir, rgbs)
 
         return None

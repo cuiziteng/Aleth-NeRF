@@ -141,7 +141,6 @@ class MipNeRF(nn.Module):
         self.mlp = MipNeRFMLP(min_deg_point, max_deg_point, deg_view)
 
     def forward(self, rays, randomized, white_bkgd, near, far):
-
         ret = []
         for i_level in range(self.num_levels):
             if i_level == 0:

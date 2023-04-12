@@ -53,6 +53,7 @@ def pose_spherical(theta, phi, radius):
 def load_blender_data(
     datadir: str,
     scene_name: str,
+    compare_method: str,
     train_skip: int,
     val_skip: int,
     test_skip: int,
@@ -61,17 +62,23 @@ def load_blender_data(
 ):
     basedir = os.path.join(datadir, scene_name)
     cam_trans = np.diag(np.array([1, -1, -1, 1], dtype=np.float32))
+    
     splits = ["train", "val", "test"]
     metas = {}
-    for s in splits:
-        with open(os.path.join(basedir, "transforms_{}.json".format(s)), "r") as fp:
-            metas[s] = json.load(fp)
+    # for s in splits:
+    #     with open(os.path.join(basedir, compare_method, "transforms_{}_gt.json".format(s)), "r") as fp:
+    #         metas[s] = json.load(fp)
+
+    fp_train = open(os.path.join(basedir, compare_method, "transforms_train.json"), "r") # training file
+    fp_val = open(os.path.join(basedir, "transforms_val.json"), "r") # evaluation file
+    fp_test = open(os.path.join(basedir, "transforms_test.json"), "r")  # testing file
+    metas["train"], metas["val"], metas["test"] = json.load(fp_train), json.load(fp_val), json.load(fp_test)
 
     images = []
     extrinsics = []
     counts = [0]
 
-    for s in splits:
+    for s in splits:    # train/ val/ test
         meta = metas[s]
         imgs = []
         poses = []
@@ -84,7 +91,7 @@ def load_blender_data(
             skip = test_skip
 
         for frame in meta["frames"][::skip]:
-            fname = os.path.join(basedir, frame["file_path"] + ".png")
+            fname = os.path.join(basedir, frame["file_path"]) 
             imgs.append(imageio.imread(fname))
             poses.append(np.array(frame["transform_matrix"]))
         imgs = (np.array(imgs) / 255.0).astype(np.float32)  # keep all 4 channels (RGBA)
@@ -92,11 +99,10 @@ def load_blender_data(
         counts.append(counts[-1] + imgs.shape[0])
         images.append(imgs)
         extrinsics.append(poses)
-
+    
     i_split = [np.arange(counts[i], counts[i + 1]) for i in range(3)]
-
+    
     images = np.concatenate(images, 0)
-
     extrinsics = np.concatenate(extrinsics, 0)
 
     extrinsics[:, :3, 3] *= cam_scale_factor
@@ -122,7 +128,7 @@ def load_blender_data(
             for angle in np.linspace(-180, 180, 40 + 1)[:-1]
         ],
         0,
-    )
+    ) 
     render_poses[:, :3, 3] *= cam_scale_factor
     near = 2.0
     far = 6.0
@@ -131,7 +137,7 @@ def load_blender_data(
         images = images[..., :3] * images[..., -1:] + (1.0 - images[..., -1:])
     else:
         images = images[..., :3]
-
+        
     return (
         images,
         intrinsics,

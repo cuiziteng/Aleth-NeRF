@@ -1,138 +1,196 @@
-# NeRF-Factory: An awesome PyTorch NeRF collection
+# Aleth-NeRF: Low-light Condition View Synthesis with Concealing Fields
 
-![logo](https://user-images.githubusercontent.com/33657821/191188990-d15744b5-c030-48ac-9669-2a0600bacdec.png)
+[Ziteng Cui<sup>1,2</sup>](https://cuiziteng.github.io/), 
+[Lin Gu<sup>3,2</sup>](https://sites.google.com/view/linguedu/home), 
+[Xiao Sun<sup>2*</sup>](https://jimmysuen.github.io/), 
+[Yu Qiao<sup>2</sup>](http://mmlab.siat.ac.cn/yuqiao/), 
+[Tatsuya Harada<sup>2,3</sup>](https://www.mi.t.u-tokyo.ac.jp/harada/). 
 
-[Project Page](https://kakaobrain.github.io/NeRF-Factory/) | [Checkpoints](https://huggingface.co/nrtf/nerf_factory)
+<sup>1.</sup>The University of Tokyo, <sup>2.</sup>Shanghai AI Lab, <sup>3.</sup>RIKEN AIP
 
-Attention all NeRF researchers! We are here with a PyTorch-reimplemented large-scale NeRF library. Our library is easily extensible and usable.
+<br/>
 
+***" Can you see your days blighted by darkness ? "
+\
+                      -- Pink Floyd (Lost For Words)***
+
+<br/>
+
+
+
+
+## :house: Abstract
+
+
+Common capture low-light scenes are challenging for most computer vision techniques, including Neural Radiance Fields (NeRF). Vanilla NeRF is viewer-centred that simplifies the rendering process only as light emission from 3D locations in the viewing direction, thus failing to model the low-illumination induced darkness. Inspired by emission theory of ancient Greek that visual perception is accomplished by rays casting from eyes, we make slight modifications on vanilla NeRF to train on multiple views of low-light scene, we can thus render out the well-lit scene in an **unsupervised** manner. We introduce a surrogate concept, Concealing Fields, that reduce the transport of light during the volume rendering stage. Specifically, our proposed method, **Aleth-NeRF**, directly learns from the dark image to understand volumetric object representation and concealing field under priors. By simply eliminating Concealing Fields, we can render a single or multi-view well-lit image(s) and gain superior performance over other 2D low light enhancement methods. Additionally, we collect the first paired LOw-light and normal-light Multi-view **(LOM)** datasets for future research.
+
+<!-- ![image](pics/model.png) -->
+<div align="center">
+  <img src="./pics/Fig1.png" height="300">
+</div>
 <p align="center">
-  <img src="https://user-images.githubusercontent.com/33657821/191189332-5684634a-f21f-42ef-ade9-140010ffba4c.gif" alt="animated" width=300 height=300/>
-  <img src="https://user-images.githubusercontent.com/33657821/191189091-cb6bce5f-814f-4c09-8da4-af36af8455c2.gif" alt="animated" height=300/>
+  <font size=1.0> We assume objects are naturally visible. However, the Concealing Field attenuates the light in the viewing direction, making the left user see a low-light scene. Aleth-NeRF takes a low-light image as input and unsupervisly learns the distribution of the Concealing Field. Then, we unconceal (alethia) the Concealing field to render the enhanced image.</font>
 </p>
 
+<br/>
 
-This contains PyTorch-implementation of 7 popular NeRF models.
-- NeRF: [[Project Page]](https://www.matthewtancik.com/nerf) [[Paper]](https://arxiv.org/abs/2003.08934) [[Code]](https://github.com/bmild/nerf)
-- NeRF++: [[Paper]](http://arxiv.org/abs/2010.07492) [[Code]](https://github.com/Kai-46/nerfplusplus)
-- DVGO: [[Project Page]](https://sunset1995.github.io/dvgo/) [[Paper-v1]](https://arxiv.org/abs/2111.11215) [[Paper-v2]](https://arxiv.org/abs/2206.05085) [[Code]](https://github.com/sunset1995/DirectVoxGO)
-- Plenoxels: [[Project Page]](https://alexyu.net/plenoxels/) [[Paper]](https://arxiv.org/abs/2112.05131) [[Code]](https://github.com/sxyu/svox2)
-- Mip-NeRF: [[Project Page]](https://jonbarron.info/mipnerf/) [[Paper]](https://arxiv.org/abs/2103.13415) [[Code]](https://github.com/google/mipnerf)
-- Mip-NeRF360: [[Project Page]](https://jonbarron.info/mipnerf360/) [[Paper]](https://arxiv.org/abs/2111.12077) [[Code]](https://github.com/google-research/multinerf)
-- Ref-NeRF: [[Project Page]](https://dorverbin.github.io/refnerf/) [[Paper]](https://arxiv.org/abs/2112.03907) [[Code]](https://github.com/google-research/multinerf)
+## :key: Enviroment setup:
 
-and also 7 popular NeRF datasets.
-- NeRF Blender: [link](https://drive.google.com/drive/folders/128yBriW1IG_3NJ5Rp7APSTZsJqdJdfc1)
-- NeRF LLFF: [link](https://drive.google.com/drive/folders/128yBriW1IG_3NJ5Rp7APSTZsJqdJdfc1)
-- Tanks and Temples: [link](https://drive.google.com/file/d/11KRfN91W1AxAW6lOFs4EeYDbeoQZCi87/view?usp=sharing)
-- LF: [link](https://drive.google.com/file/d/1gsjDjkbTh4GAR9fFqlIDZ__qR9NYTURQ/view?usp=sharing)
-- NeRF-360: [link](https://drive.google.com/drive/folders/128yBriW1IG_3NJ5Rp7APSTZsJqdJdfc1)
-- NeRF-360-v2: [link](https://jonbarron.info/mipnerf360/)
-- Shiny Blender: [link](https://dorverbin.github.io/refnerf/)
+We build the environment follow [NeRF-Factory projcet](https://github.com/kakaobrain/nerf-factory), and please adapt to your own cuda version:
 
-You only need to do for running the code is:
+```
+1.
+$ git clone https://github.com/cuiziteng/Aelth-NeRF.git
 
-```bash
-python3 -m run --ginc configs/[model]/[data].gin
-# ex) python3 -m run --ginc configs/nerf/blender.gin
+$ cd Aleth-NeRF
+
+2.
+$ conda create -n aleth_nerf -c anaconda python=3.8
+$ conda install pytorch==1.11.0 torchvision==0.12.0 torchaudio==0.11.0 cudatoolkit=11.3 -c pytorch
+$ pip3 install -r requirements.txt
+
+## Or you could directly build from nerf_factory.yml: 
+$ conda env create --file nerf_factory.yml
+
+3.
+$ conda activate aleth_nerf
 ```
 
-We also provide convenient visualizers for NeRF researchers.
 
 
-## Contributor
-This project is created and maintained by [Yoonwoo Jeong](https://github.com/jeongyw12382), [Seungjoo Shin](https://github.com/seungjooshin), and [Kibaek Park](https://github.com/parkkibaek).
+<br/>
 
-## Requirements
+## :computer: Usage:
+
+### (1). LOM dataset
+
+We collect the first paired low and normal light multi-view images dataset, names **LOM** dataset. Download the **LOM** dataset from: [google drive](https://drive.google.com/file/d/1YBSHMSFmHxAHHS9qo_qdthchhl8IlKCP/view?usp=share_link) or [baiduyun (passwd: qeb7)](https://pan.baidu.com/s/1Y76ya8YniIe4GpjGVBzlOg). 
+
+LOM dataset contains 5 scenes (*buu* | *chair* | *sofa* | *bike* | *shrub*), each scene includes 25~65 paired multi-view normal-light and low-light images, and low-light images enhanced by different 2D low-light enhancement methods.
+
+Unzip the download file, place LOM under $data$ folder, then LOM dataset format as follow:
+
 ```
-conda create -n nerf_factory -c anaconda python=3.8
-conda install pytorch==1.11.0 torchvision==0.12.0 torchaudio==0.11.0 cudatoolkit=11.3 -c pytorch
-pip3 install -r requirements.txt
+data     
+└───
+    LOM_full      
+    └─── buu
+        │─── colmap_sparse
+        │─── colmap_text
+        │─── enh_HE (images enhanced by [Histogram Equlization])
+        │─── enh_LIME (images enhanced by [LIME, TIP 2017])
+        │─── enh_RetiNexNet (images enhanced by [RetiNexNet, BMVC 2018])
+        │─── enh_SCI (images enhanced by [SCI, CVPR 2022])
+        │─── enh_IAT (images enhanced by [IAT, BMVC 2022])
+        │─── high (normal-light images)
+        │─── low  (low-light images)
+        │─── colamp.db
+        │─── transforms_test.json (test scenes)
+        │─── transforms_train.json (train scenes)
+        │─── transforms_val.json (validation scenes)
 
-## Optional(Plenoxel)
-pip3 install .
-
-## Or you could directly build from nerf_factory.yml
-conda env create --file nerf_factory.yml
-```
-
-## Command
-
-```bash
-python3 -m run --ginc configs/[model]/[data].gin
-# ex) python3 -m run --ginc configs/nerf/blender.gin
-```
-
-## Preparing Dataset
-
-We provide an automatic download script for all datasets.
-
-```bash
-# NeRF-blender dataset
-bash scripts/download_data.sh nerf_synthetic
-# NeRF-LLFF(NeRF-Real) dataset
-bash scripts/download_data.sh nerf_llff
-# NeRF-360 dataset
-bash scripts/download_data.sh nerf_real_360
-# Tanks and Temples dataset
-bash scripts/download_data.sh tanks_and_temples
-# LF dataset
-bash scripts/download_data.sh lf
-# NeRF-360-v2 dataset
-bash scripts/download_data.sh nerf_360_v2
-# Shiny-blender dataset
-bash scripts/download_data.sh shiny_blender
+    │─── chair 
+        │─── ...     
+    │─── sofa
+        │─── ...     
+    │─── bike
+        │─── ...     
+    │─── shrub
+        │─── ...     
 ```
 
-## Run the Code!
+### (2). Training Aleth-NeRF
 
-A very simple script to run the code.
+By default, we use 4 GPUs to train Aleth-NeRF on LOM dataset (around **3 hours ~ 4 hours** per scene), you can also change to other GPU number. We take "*buu*" scene training for example:
 
-
-### Training Code
-
-A script for running the training code.
-
-```bash
-python3 run.py --ginc configs/[model]/[data].gin --scene [scene]
-
-## ex) run training nerf on chair scene of blender dataset
-python3 run.py --ginc configs/nerf/blender.gin --scene chair
+```
+$ CUDA_VISIBLE_DEVICES=0,1,2,3 python3 run.py --ginc configs/LOM/aleth_nerf/aleth_nerf_buu.gin --eta 0.1
 ```
 
-### Evaluation Code
+Here the hyper-parameter conceal degree "--eta" : "$\eta$" (see Sec.3.3 and Sec.C in our paper), is default set to 0.1 in "*buu*" and "*sofa*" scenes, to 0.05 in "*shrub*", "*chair*" and "*bike*" scenes.
 
-A script for running the evaluation code only.
+Beyond, the "--overall_g" (adjust final render lightness, default 1.0) better set to 1.5 in "*bike*" and "*shrub*" scene. "*bike*" scene for example:
 
-```bash
-python3 run.py --ginc configs/[model]/[data].gin --scene [scene] \
---ginb run.run_train=False
-
-## ex) run evaluating nerf on chair scene of blender dataset
-python3 run.py --ginc configs/nerf/blender.gin --scene chair \
---ginb run.run_train=False
+```
+$ CUDA_VISIBLE_DEVICES=0,1,2,3 python3 run.py --ginc configs/LOM/aleth_nerf/aleth_nerf_bike.gin --eta 0.05 --overall_g 1.5
 ```
 
-## Custom
+Or directly use following command to run all 5 scenes:
 
-How to add the custom dataset and the custom model in NeRF-Factory?
+```
+$ bash run/run_LOM_aleth.sh
+```
 
-### Custom Dataset
+### (3). Evaluation with pre-train weights
 
-- Add files of the custom dataset on ```./data/[custom_dataset]```.
-- Implement a dataset loader code on ```./src/data/data_util/[custom_dataset].py```.
-- Implement a custom dataset class ```LitData[custom_dataset]``` on ```./src/data/litdata.py```.
-- Add option of selecting the custom dataset on the function ```def select_dataset()``` of ```./utils/select_option.py```.
-- Add gin config file for each model as ```./configs/[model]/[custom_dataset].gin```.
+You could also download our pre-train weights for direct model evaluation [google drive](https://drive.google.com/file/d/142G9GBqNRY_QiiYYCXXe8tcC5GbeDzxV/view?usp=share_link) or [baiduyun (passwd:gkiw)](https://pan.baidu.com/s/1-NyB3rDYrcT6rSQ7O0eRmw), then unzip the file under this folder (./logs), final test each scene as follow:
 
-### Custom Model
+```
+# buu
+$ CUDA_VISIBLE_DEVICES=0,1,2,3 python3 run.py --ginc configs/LOM/aleth_nerf/aleth_nerf_buu.gin --ginb run.run_train=False
 
-- Implement a custom model code on ```./src/model/[custom_model]/model.py```.
-- Implement a custom model's helper code on ```./src/model/[custom_model]/helper.py```.
-- [Optional] If you need more code files for the custom model, you can add them in ```./src/model/[custom_model]/```.- Add option of selecting the custom model on the function ```def select_model()``` of ```./utils/select_option.py```.
-- Add gin config file for each model as ```./configs/[custom_model]/[dataset].gin```.
+# chair
+$ CUDA_VISIBLE_DEVICES=0,1,2,3 python3 run.py --ginc configs/LOM/aleth_nerf/aleth_nerf_buu.gin --eta 0.05 --ginb run.run_train=False
 
-### License
+# sofa
+$ CUDA_VISIBLE_DEVICES=0,1,2,3 python3 run.py --ginc configs/LOM/aleth_nerf/aleth_nerf_buu.gin --ginb run.run_train=False
 
-Copyright (c) 2022 POSTECH, KAIST, and Kakao Brain Corp. All Rights Reserved.
-Licensed under the Apache License, Version 2.0 (see [LICENSE](https://github.com/kakaobrain/NeRF-Factory/tree/main/LICENSE) for details)
+# bike
+$ CUDA_VISIBLE_DEVICES=0,1,2,3 python3 run.py --ginc configs/LOM/aleth_nerf/aleth_nerf_bike.gin --eta 0.05 --overall_g 1.5 --ginb run.run_train=False
+
+# shrub
+$ CUDA_VISIBLE_DEVICES=0,1,2,3 python3 run.py --ginc configs/LOM/aleth_nerf/aleth_nerf_shrub.gin --eta 0.05 --overall_g 1.5 --ginb run.run_train=False
+```
+
+### (4). Optional-1: Comparision Methods on LOM dataset
+
+1. Training NeRF on low-light images, "*buu*" scene training for example:
+
+```
+$ CUDA_VISIBLE_DEVICES=0,1,2,3 python3 run.py --ginc configs/LOM/nerf/nerf_buu.gin
+```
+
+2. Training NeRF on low-light images enhanced by various 2D enhancement methods (HE, [LIME](https://ieeexplore.ieee.org/document/7782813), [RetiNexNet](https://daooshee.github.io/BMVC2018website/), [SCI](https://openaccess.thecvf.com/content/CVPR2022/papers/Ma_Toward_Fast_Flexible_and_Robust_Low-Light_Image_Enhancement_CVPR_2022_paper.pdf), [IAT](https://bmvc2022.mpi-inf.mpg.de/238/)), "*buu*" scene training for example:
+
+```
+$ CUDA_VISIBLE_DEVICES=0,1,2,3 python3 run.py --ginc configs/LOM/compare_methods/HE(or LIME, RetiNexNet, SCI, IAT)/nerf_buu.gin
+```
+
+### (5). Optional-2: LOL dataset training (Single Image Enhancement)
+
+**TBD**
+<!-- Aleth-NeRF is not designed for single image low-light enhancement. But you could also complete single image enhancement with our code (camera parameters are fixed): -->
+
+
+
+<br/>
+
+## :smile: Others:
+
+If you want to editing the code or figure model details of Aleth-NeRF, direct refer to [model.py](src/model/aleth_nerf/model.py) and [helper.py](src/model/nerf/helper.py).
+
+<br/>
+
+## Reference and Related Works:
+
+**Acknowledgement:**
+
+Code is based on [NeRF-Factory](https://github.com/kakaobrain/nerf-factory), much thanks to their excellent codebase. Also if you use **LOM** dataset or our code & paper help you, please consider cite our work:
+
+```
+@misc{cui2023alethnerf,
+      title={Aleth-NeRF: Low-light Condition View Synthesis with Concealing Fields}, 
+      author={Ziteng Cui and Lin Gu and Xiao Sun and Yu Qiao and Tatsuya Harada},
+      year={2023},
+      eprint={2303.05807},
+      archivePrefix={arXiv},
+      primaryClass={cs.CV}
+}
+```
+<br/>
+
+**My Other Related Projects:**
+
+**(1)**.  **Transformer for Low-light enhancement and exposure correction**, **BMVC 2022**: *You Only Need 90K Parameters to Adapt Light: a Light Weight Transformer for Image Enhancement and Exposure Correction* [(code)](https://github.com/cuiziteng/Illumination-Adaptive-Transformer) [(paper)](https://bmvc2022.mpi-inf.mpg.de/0238.pdf).
+
+**(2)**.  **Object detection in Low-light Condition**, **ICCV 2021**: *Multitask AET with Orthogonal Tangent Regularity for Dark Object Detection* [(code)](https://github.com/cuiziteng/ICCV_MAET) [(paper)](https://openaccess.thecvf.com/content/ICCV2021/papers/Cui_Multitask_AET_With_Orthogonal_Tangent_Regularity_for_Dark_Object_Detection_ICCV_2021_paper.pdf).

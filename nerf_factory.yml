@@ -1,4 +1,4 @@
-name: nerf_factory
+name: aleth_nerf
 channels:
   - pytorch
   - nvidia

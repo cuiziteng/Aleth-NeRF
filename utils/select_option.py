@@ -11,10 +11,12 @@ from src.data.litdata import (
     LitDataBlenderMultiScale,
     LitDataLF,
     LitDataLLFF,
+    LitDataLLFF_Pair,
     LitDataNeRF360V2,
     LitDataRefNeRFReal,
     LitDataShinyBlender,
     LitDataTnT,
+    LitDataSingle
 )
 from src.model.dvgo.model import LitDVGO
 from src.model.mipnerf360.model import LitMipNeRF360
@@ -23,10 +25,12 @@ from src.model.nerf.model import LitNeRF
 from src.model.nerfpp.model import LitNeRFPP
 from src.model.plenoxel.model import LitPlenoxel
 from src.model.refnerf.model import LitRefNeRF
+from src.model.aleth_nerf.model import LitAleth_NeRF
 
 
 def select_model(
-    model_name: str,
+    model_name: str, K_g: float,    
+    K_l: float, eta:float, overall_g: float, 
 ):
 
     if model_name == "nerf":
@@ -43,6 +47,8 @@ def select_model(
         return LitRefNeRF()
     elif model_name == "mipnerf360":
         return LitMipNeRF360()
+    elif model_name == 'aleth_nerf':
+        return LitAleth_NeRF(K_g, K_l, eta, overall_g)
 
     else:
         raise f"Unknown model named {model_name}"
@@ -59,6 +65,8 @@ def select_dataset(
         data_fun = LitDataBlenderMultiScale
     elif dataset_name == "llff":
         data_fun = LitDataLLFF
+    elif dataset_name == 'llff_pair':
+        data_fun = LitDataLLFF_Pair
     elif dataset_name == "tanks_and_temples":
         data_fun = LitDataTnT
     elif dataset_name == "lf":
@@ -69,6 +77,10 @@ def select_dataset(
         data_fun = LitDataShinyBlender
     elif dataset_name == "refnerf_real":
         data_fun = LitDataRefNeRFReal
+    elif dataset_name == 'single_image':
+        data_fun = LitDataSingle
+    
+    
 
     return data_fun(
         datadir=datadir,

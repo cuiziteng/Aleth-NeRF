@@ -42,13 +42,18 @@ def run(
     ginb: str,
     resume_training: bool,
     ckpt_path: Optional[str],
-    scene_name: Optional[str],
+    scene_name: Optional[str] = None,
     datadir: Optional[str] = None,
     logbase: Optional[str] = None,
     model_name: Optional[str] = None,
     dataset_name: Optional[str] = None,
     postfix: Optional[str] = None,
     entity: Optional[str] = None,
+    # Hyper Parameter in Aleth-NeRF
+    K_l: float = 0.5,
+    K_g: float = 0.5,
+    eta: float = 0.2,
+    overall_g: float = 1.0,
     # Optimization
     max_steps: int = -1,
     max_epochs: int = -1,
@@ -68,13 +73,13 @@ def run(
     grad_max_norm=0.0,
     grad_clip_algorithm="norm",
 ):
-
+    print('the scene name is:', scene_name)
     logging.getLogger("lightning").setLevel(logging.ERROR)
     datadir = datadir.rstrip("/")
+    
+    exp_name = (model_name + "_" + dataset_name + "_" + scene_name + "_" + str(seed).zfill(3) + \
+        'eta' + str(eta))
 
-    exp_name = (
-        model_name + "_" + dataset_name + "_" + scene_name + "_" + str(seed).zfill(3)
-    )
     if postfix is not None:
         exp_name += "_" + postfix
     if debug:
@@ -87,13 +92,13 @@ def run(
         num_devices = 1
 
     if logbase is None:
-        logbase = "logs"
+        logbase = "/data/unagi0/cui_data/Night_NeRF/logs_ablation"
 
     os.makedirs(logbase, exist_ok=True)
     logdir = os.path.join(logbase, exp_name)
     os.makedirs(logdir, exist_ok=True)
     os.makedirs(os.path.join(logdir, exp_name), exist_ok=True)
-
+    print('the log dir is:', logdir)
     logger = pl_loggers.TensorBoardLogger(
         save_dir=logdir,
         name=exp_name,
@@ -139,7 +144,7 @@ def run(
         logger=logger if run_train else None,
         log_every_n_steps=log_every_n_steps,
         devices=num_devices,
-        max_epochs=max_epochs,
+        max_epochs=max_epochs,  #-1
         max_steps=max_steps,
         accelerator="gpu",
         replace_sampler_ddp=False,
@@ -162,9 +167,10 @@ def run(
         datadir=datadir,
     )
 
-    model = select_model(model_name=model_name)
+    model = select_model(model_name=model_name, K_g = K_g, 
+                        K_l = K_l, eta = eta, overall_g = overall_g) # model define
     model.logdir = logdir
-    if run_train:
+    if run_train:   # Training
         best_ckpt = os.path.join(logdir, "best.ckpt")
         if os.path.exists(best_ckpt):
             os.remove(best_ckpt)
@@ -174,20 +180,24 @@ def run(
 
         trainer.fit(model, data_module, ckpt_path=ckpt_path)
 
-    if run_eval:
+    if run_eval:    # Evaluation
         ckpt_path = (
-            f"{logdir}/best.ckpt"
-            if model_name != "mipnerf360"
+            f"{logdir}/last.ckpt"
+            if dataset_name != 'single_image_non_ref'
             else f"{logdir}/last.ckpt"
         )
+        print('the checkpoint path is:', ckpt_path)
         trainer.test(model, data_module, ckpt_path=ckpt_path)
 
-    if run_render:
+    if run_render:  # Rendering
+        print('rendering')
         ckpt_path = (
-            f"{logdir}/best.ckpt"
-            if model_name != "mipnerf360"
+            f"{logdir}/last.ckpt"
+            #if model_name != "mipnerf360" or dataset_name != 'single_image_non_ref'
+            if dataset_name != 'single_image_non_ref'
             else f"{logdir}/last.ckpt"
         )
+        print('the checkpoint path is:', ckpt_path)
         trainer.predict(model, data_module, ckpt_path=ckpt_path)
 
 
@@ -214,10 +224,12 @@ if __name__ == "__main__":
     parser.add_argument(
         "--ckpt_path", type=str, default=None, help="path to checkpoints"
     )
-    parser.add_argument(
-        "--scene_name", type=str, default=None, help="scene name to render"
-    )
+    parser.add_argument("--K_l", type=float, default=0.3, help="Local Concealing Range")
+    parser.add_argument("--K_g", type=float, default=0.3, help="Global Concealing Initial Value")
+    parser.add_argument("--eta", type=float, default=0.1, help="Concealing Degree Control")
+    parser.add_argument("--overall_g", type=float, default=1.0, help="Overall Gain for Final Enhancement, default 1.0")
     parser.add_argument("--seed", type=int, default=220901, help="seed to use")
+    parser.add_argument("--logbase", type=str, default="./logs", help="seed to use")
     args = parser.parse_args()
 
     ginbs = []
@@ -229,9 +241,13 @@ if __name__ == "__main__":
 
     gin.parse_config_files_and_bindings(args.ginc, ginbs)
     run(
+        logbase=args.logbase,
         ginc=args.ginc,
         ginb=ginbs,
-        scene_name=args.scene_name,
+        K_l=args.K_l,
+        K_g=args.K_g,
+        eta=args.eta,
+        overall_g=args.overall_g,
         resume_training=args.resume_training,
         ckpt_path=args.ckpt_path,
         seed=args.seed,

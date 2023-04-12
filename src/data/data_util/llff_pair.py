@@ -89,7 +89,7 @@ def _load_data(basedir, factor=None, width=None, height=None, load_imgs=True):
     sh = imageio.imread(img0).shape
 
     sfx = ""
-    print(factor)
+
     if factor is not None:
         sfx = "_{}".format(factor)
         _minify(basedir, factors=[factor])
@@ -106,21 +106,27 @@ def _load_data(basedir, factor=None, width=None, height=None, load_imgs=True):
         sfx = "_{}x{}".format(width, height)
     else:
         factor = 1
-    #print('the factor is:', factor)
-    #print('the sfx is:', sfx)
-    imgdir = os.path.join(basedir, "images" + sfx)
-    #imgdir = os.path.join(basedir, "images" + sfx + '_low')  # Caution
-    #imgdir = os.path.join(basedir, "images" + sfx + '_mask')
-    #print('the image dir is:', imgdir)
+    print('the factor is:', factor)
+    print('the sfx is:', sfx)
+    imgdir = os.path.join(basedir, "images" + sfx + '_low')  # Load Low-light Images
+    imgdir_gt = os.path.join(basedir, "images" + sfx)  # Load Low-light Images
+    print('the image dir is:', imgdir)
     if not os.path.exists(imgdir):
         print(imgdir, "does not exist, returning")
         return
-
+    
     imgfiles = [
         os.path.join(imgdir, f)
         for f in sorted(os.listdir(imgdir))
         if f.endswith("JPG") or f.endswith("jpg") or f.endswith("png")
     ]
+
+    imgfiles_gt = [
+        os.path.join(imgdir_gt, f)
+        for f in sorted(os.listdir(imgdir))
+        if f.endswith("JPG") or f.endswith("jpg") or f.endswith("png")
+    ]
+
     if poses.shape[-1] != len(imgfiles):
         print(
             "Mismatch between imgs {} and poses {} !!!!".format(
@@ -141,10 +147,20 @@ def _load_data(basedir, factor=None, width=None, height=None, load_imgs=True):
             return imageio.imread(f, ignoregamma=True)
         else:
             return imageio.imread(f)
-    for f in imgfiles:
-        print('the file is:', f)
+    # for f in imgfiles:
+    #     print('the file is:', f)
     imgs = [imread(f)[..., :3] / 255.0 for f in imgfiles]
     imgs = np.stack(imgs, -1)
+    
+    imgs_gt = [imread(f)[..., :3] / 255.0 for f in imgfiles_gt]
+    imgs_gt = np.stack(imgs_gt, -1)
+    
+    print('poses', poses.shape)
+    print('bds', bds.shape)
+    print('imgs', imgs.shape)
+    imgs = np.concatenate((imgs, imgs_gt), axis=-1)
+    poses = np.concatenate((poses, poses), axis=-1)
+    bds = np.concatenate((bds, bds), axis=-1)
 
     return poses, bds, imgs
 
@@ -290,7 +306,7 @@ def transform_pose_llff(poses):
     return ret
 
 
-def load_llff_data(
+def load_llff_data_pair(
     datadir: str,
     scene_name: str,
     factor: int,
@@ -363,21 +379,22 @@ def load_llff_data(
 
     dists = np.sum(np.square(c2w[:3, 3] - poses[:, :3, 3]), -1)
     i_test = np.argmin(dists)
-
+    print('i_test', i_test)
     images = images.astype(np.float32)
     poses = poses.astype(np.float32)
+
     # Transforming the coordinate
     poses = transform_pose_llff(poses)
     render_poses = np.stack(render_poses)[:, :3, :4]
     render_poses = transform_pose_llff(render_poses)
-    #print('the shape is;', poses.shape, render_poses.shape)
     extrinsics = poses[:, :3, :4]
 
     if not isinstance(i_test, list):
         i_test = [i_test]
 
-    num_frame = len(poses)
+    num_frame = len(poses)//2
     hwf = poses[0, :3, -1]
+    # print('hwf', hwf)
     h, w, focal = hwf
     h, w = int(h), int(w)
     hwf = [h, w, focal]
@@ -387,30 +404,28 @@ def load_llff_data(
             for _ in range(num_frame)
         ]
     )
-
+    intrinsics = np.concatenate((intrinsics, intrinsics), axis=0)
     if llffhold > 0:
-        i_test = np.arange(num_frame)[::llffhold]
-
+        i_test = np.arange(num_frame)[::llffhold] + num_frame
+    print(i_test)
     i_val = i_test
-    is_train = lambda i: i not in i_test and i not in i_val
+    is_train = lambda i: i not in (i_test-num_frame) and i not in (i_val-num_frame)
     i_train = np.array([i for i in np.arange(num_frame) if is_train(i)])
 
     if near is None and far is None:
         near = np.ndarray.min(bds) * 0.9 if not ndc_coord else 0.0
         far = np.ndarray.max(bds) * 1.0 if not ndc_coord else 1.0
 
-    image_sizes = np.array([[h, w] for i in range(num_frame)])
-    #print(image_sizes.shape)
-    #print('the size is:', image_sizes[0][1], image_sizes[0][0])
-    i_all = np.arange(num_frame)
+    image_sizes = np.array([[h, w] for i in range(num_frame*2)])
+    i_all = np.arange(num_frame*2)
     i_split = (i_train, i_val, i_test, i_all)
-    print('train', i_train, 'val', i_val, 'test', i_test, 'all', i_all)
-
+    
+    # print(i_split)
     if ndc_coord:   # True
         ndc_coeffs = (2 * intrinsics[0, 0, 0] / w, 2 * intrinsics[0, 1, 1] / h)
     else:
         ndc_coeffs = (-1.0, -1.0)
-
+    
     return (
         images,
         intrinsics,
@@ -422,6 +437,3 @@ def load_llff_data(
         i_split,
         render_poses,
     )
-
-# if __name__ == '__main__':
-#     load_llff_data

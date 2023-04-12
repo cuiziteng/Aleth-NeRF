@@ -10,129 +10,34 @@
 
 import os
 from subprocess import check_output
-from turtle import pos
 from typing import *
-
+from glob import glob
 import imageio
 import numpy as np
 
 
-def _minify(basedir, factors=[], resolutions=[]):
-    needtoload = False
-    for r in factors:
-        if r != 0:
-            imgdir = os.path.join(basedir, "images_{}".format(r))
-        else:
-            imgdir = os.path.join(basedir, "images")
-        if not os.path.exists(imgdir):
-            needtoload = True
-    for r in resolutions:
-        imgdir = os.path.join(basedir, "images_{}x{}".format(r[1], r[0]))
-        if not os.path.exists(imgdir):
-            needtoload = True
-    if not needtoload:
-        return
-
-    imgdir = os.path.join(basedir, "images")
-    imgs = [os.path.join(imgdir, f) for f in sorted(os.listdir(imgdir))]
-    imgs = [
-        f
-        for f in imgs
-        if any([f.endswith(ex) for ex in ["JPG", "jpg", "png", "jpeg", "PNG"]])
-    ]
-    imgdir_orig = imgdir
-
-    wd = os.getcwd()
-
-    for r in factors + resolutions:
-        if isinstance(r, int):
-            name = "images_{}".format(r)
-            resizearg = "{}%".format(100.0 / r)
-        else:
-            name = "images_{}x{}".format(r[1], r[0])
-            resizearg = "{}x{}".format(r[1], r[0])
-        imgdir = os.path.join(basedir, name)
-        if os.path.exists(imgdir):
-            continue
-
-        print("Minifying", r, basedir)
-
-        os.makedirs(imgdir)
-        check_output("cp {}/* {}".format(imgdir_orig, imgdir), shell=True)
-
-        ext = imgs[0].split(".")[-1]
-        args = " ".join(
-            ["mogrify", "-resize", resizearg, "-format", "png", "*.{}".format(ext)]
-        )
-        print(args)
-        os.chdir(imgdir)
-        check_output(args, shell=True)
-        os.chdir(wd)
-
-        if ext != "png":
-            check_output("rm {}/*.{}".format(imgdir, ext), shell=True)
-            print("Removed duplicates")
-        print("Done")
-
-# Load LIIF data
-def _load_data(basedir, factor=None, width=None, height=None, load_imgs=True):
+# Load Single Image data
+def _load_data(basedir, scene_name, factor=None, width=None, height=None, load_imgs=True):
     poses_arr = np.load(os.path.join(basedir, "poses_bounds.npy"))  # Load Position Information
-    print('pose arry', poses_arr.shape)
-    poses = poses_arr[:, :-2].reshape([-1, 3, 5]).transpose([1, 2, 0])  # (3, 5, 20)
-    bds = poses_arr[:, -2:].transpose([1, 0])   # (2, 20)
+    
+    poses = poses_arr[:, :-2].reshape([-1, 3, 5]).transpose([1, 2, 0])[:, :, 0:1]
+    bds = poses_arr[:, -2:].transpose([1, 0])[:, 0:1]
+    
+    # Load Image
+    image_path = os.path.join(basedir, scene_name)
+    if 'lol' or 'Huawei' in basedir:
+        image_gt_path = os.path.join(basedir.replace('low', 'high'), scene_name)
+    elif 'NH-HAZE' in basedir:
+        image_gt_path = os.path.join(basedir.replace('hazy', 'GT'), scene_name)
+    
+    factor = 4
 
-    img0 = [
-        os.path.join(basedir, "images", f)
-        for f in sorted(os.listdir(os.path.join(basedir, "images")))
-        if f.endswith("JPG") or f.endswith("jpg") or f.endswith("png")
-    ][0]
-    sh = imageio.imread(img0).shape
-
-    sfx = ""
-    print(factor)
-    if factor is not None:
-        sfx = "_{}".format(factor)
-        _minify(basedir, factors=[factor])
-        factor = factor
-    elif height is not None:
-        factor = sh[0] / float(height)
-        width = int(sh[1] / factor)
-        _minify(basedir, resolutions=[[height, width]])
-        sfx = "_{}x{}".format(width, height)
-    elif width is not None:
-        factor = sh[1] / float(width)
-        height = int(sh[0] / factor)
-        _minify(basedir, resolutions=[[height, width]])
-        sfx = "_{}x{}".format(width, height)
-    else:
-        factor = 1
-    #print('the factor is:', factor)
-    #print('the sfx is:', sfx)
-    imgdir = os.path.join(basedir, "images" + sfx)
-    #imgdir = os.path.join(basedir, "images" + sfx + '_low')  # Caution
-    #imgdir = os.path.join(basedir, "images" + sfx + '_mask')
-    #print('the image dir is:', imgdir)
-    if not os.path.exists(imgdir):
-        print(imgdir, "does not exist, returning")
-        return
-
-    imgfiles = [
-        os.path.join(imgdir, f)
-        for f in sorted(os.listdir(imgdir))
-        if f.endswith("JPG") or f.endswith("jpg") or f.endswith("png")
-    ]
-    if poses.shape[-1] != len(imgfiles):
-        print(
-            "Mismatch between imgs {} and poses {} !!!!".format(
-                len(imgfiles), poses.shape[-1]
-            )
-        )
-        return
-
-    sh = imageio.imread(imgfiles[0]).shape
+    sh = imageio.imread(image_path).shape
     poses[:2, 4, :] = np.array(sh[:2]).reshape([2, 1])
     poses[2, 4, :] = poses[2, 4, :] * 1.0 / factor
-
+    poses = np.concatenate((poses, poses), axis=-1)
+    bds = np.concatenate((bds, bds), axis = -1)
+    
     if not load_imgs:
         return poses, bds
 
@@ -141,11 +46,11 @@ def _load_data(basedir, factor=None, width=None, height=None, load_imgs=True):
             return imageio.imread(f, ignoregamma=True)
         else:
             return imageio.imread(f)
-    for f in imgfiles:
-        print('the file is:', f)
-    imgs = [imread(f)[..., :3] / 255.0 for f in imgfiles]
-    imgs = np.stack(imgs, -1)
 
+    img = imread(image_path)[..., :3]/ 255.0    # input
+    img_gt = imread(image_gt_path)[..., :3]/ 255.0  # target
+    imgs = np.stack([img, img_gt], -1)
+    
     return poses, bds, imgs
 
 
@@ -290,23 +195,20 @@ def transform_pose_llff(poses):
     return ret
 
 
-def load_llff_data(
+def load_image_data(
     datadir: str,
     scene_name: str,
-    factor: int,
-    ndc_coord: bool,    # True
-    recenter: bool,
-    bd_factor: float,
-    spherify: bool,
-    llffhold: int,
-    path_zflat: bool,
-    near: Optional[float],
-    far: Optional[float],
+    ndc_coord: bool=True,    # True
+    recenter: bool=True,
+    bd_factor: float=0.75,
+    spherify: bool=False,
+    llffhold: int=8,
+    path_zflat: bool=False,
+    near: Optional[float]=None,
+    far: Optional[float]=None,
 ):
-
-    basedir = os.path.join(datadir, scene_name)
-    poses, bds, imgs = _load_data(basedir, factor=factor)
-    # factor=8 downsamples original imgs by 8x
+    
+    poses, bds, imgs = _load_data(datadir, scene_name)
 
     # Correct rotation matrix ordering and move variable dim to axis 0
     poses = np.concatenate([poses[:, 1:2, :], -poses[:, 0:1, :], poses[:, 2:, :]], 1)
@@ -315,7 +217,7 @@ def load_llff_data(
     images = imgs
     bds = np.moveaxis(bds, -1, 0).astype(np.float32)
 
-    # Rescale if bd_factor is provided
+    # Rescale if bd_factor is provided, bd_factor 0.75
     sc = 1.0 if bd_factor is None else 1.0 / (bds.min() * bd_factor)
     poses[:, :3, 3] *= sc
     bds *= sc
@@ -363,16 +265,19 @@ def load_llff_data(
 
     dists = np.sum(np.square(c2w[:3, 3] - poses[:, :3, 3]), -1)
     i_test = np.argmin(dists)
-
+    print(i_test)
     images = images.astype(np.float32)
     poses = poses.astype(np.float32)
+    print(images.shape)
+    print(poses.shape)
+
     # Transforming the coordinate
     poses = transform_pose_llff(poses)
     render_poses = np.stack(render_poses)[:, :3, :4]
     render_poses = transform_pose_llff(render_poses)
-    #print('the shape is;', poses.shape, render_poses.shape)
     extrinsics = poses[:, :3, :4]
-
+    print('extric', extrinsics.shape)
+    
     if not isinstance(i_test, list):
         i_test = [i_test]
 
@@ -388,33 +293,32 @@ def load_llff_data(
         ]
     )
 
-    if llffhold > 0:
-        i_test = np.arange(num_frame)[::llffhold]
-
-    i_val = i_test
-    is_train = lambda i: i not in i_test and i not in i_val
-    i_train = np.array([i for i in np.arange(num_frame) if is_train(i)])
+    # if llffhold > 0:
+    #     i_test = np.arange(num_frame)[::llffhold]
+    
+    #i_train = i_val = i_test
 
     if near is None and far is None:
         near = np.ndarray.min(bds) * 0.9 if not ndc_coord else 0.0
         far = np.ndarray.max(bds) * 1.0 if not ndc_coord else 1.0
 
     image_sizes = np.array([[h, w] for i in range(num_frame)])
-    #print(image_sizes.shape)
-    #print('the size is:', image_sizes[0][1], image_sizes[0][0])
-    i_all = np.arange(num_frame)
+    
+    #i_all = np.arange(num_frame)
+    i_train = np.array([0])
+    i_val = i_test = np.array([1])
+    i_all = np.array([0,1])
     i_split = (i_train, i_val, i_test, i_all)
-    print('train', i_train, 'val', i_val, 'test', i_test, 'all', i_all)
-
-    if ndc_coord:   # True
+    
+    if ndc_coord:
         ndc_coeffs = (2 * intrinsics[0, 0, 0] / w, 2 * intrinsics[0, 1, 1] / h)
     else:
         ndc_coeffs = (-1.0, -1.0)
-
+    
     return (
         images,
-        intrinsics,
-        extrinsics,
+        intrinsics, # pose相关
+        extrinsics, #
         image_sizes,
         near,
         far,
@@ -422,6 +326,7 @@ def load_llff_data(
         i_split,
         render_poses,
     )
+    
 
-# if __name__ == '__main__':
-#     load_llff_data
+if __name__ == '__main__':
+    c = load_image_data('data/single_img/fern')

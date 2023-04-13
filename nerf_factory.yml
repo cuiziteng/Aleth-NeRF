@@ -232,6 +232,7 @@ dependencies:
     - tornado==6.1
     - traitlets==5.2.2.post1
     - typing-extensions==4.3.0
+    - matplotlib==3.7.1
     - urllib3==1.26.12
     - wandb==0.13.2
     - webencodings==0.5.1

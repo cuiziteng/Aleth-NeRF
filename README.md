@@ -1,10 +1,10 @@
 # Aleth-NeRF: Low-light Condition View Synthesis with Concealing Fields [(Website)](https://cuiziteng.github.io/Aleth_NeRF_web/) [(ArXiv)](https://arxiv.org/abs/2303.05807)
 
 [Ziteng Cui<sup>1,2</sup>](https://cuiziteng.github.io/), 
-[Lin Gu<sup>3,2</sup>](https://sites.google.com/view/linguedu/home), 
+[Lin Gu<sup>3,1</sup>](https://sites.google.com/view/linguedu/home), 
 [Xiao Sun<sup>2*</sup>](https://jimmysuen.github.io/), 
 [Yu Qiao<sup>2</sup>](http://mmlab.siat.ac.cn/yuqiao/), 
-[Tatsuya Harada<sup>2,3</sup>](https://www.mi.t.u-tokyo.ac.jp/harada/). 
+[Tatsuya Harada<sup>1,3</sup>](https://www.mi.t.u-tokyo.ac.jp/harada/). 
 
 <sup>1.</sup>The University of Tokyo, <sup>2.</sup>Shanghai AI Lab, <sup>3.</sup>RIKEN AIP
 

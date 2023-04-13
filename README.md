@@ -36,7 +36,7 @@ Common capture low-light scenes are challenging for most computer vision techniq
 
 ## :key: Enviroment setup:
 
-We build the environment follow [NeRF-Factory projcet](https://github.com/kakaobrain/nerf-factory), and please adapt to your own cuda version:
+We build the environment follow [NeRF-Factory projcet](https://github.com/kakaobrain/nerf-factory):
 
 ```
 1.

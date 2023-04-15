@@ -37,7 +37,7 @@ Common capture low-light scenes are challenging for most computer vision techniq
   <img src="./pics/Methods.png" height="300">
 </div>
 <p align="left">
-  <font size=0.5> Overview of the Aleth-NeRF architecture. Local and Global Concealing Fields are additionally learned and integrated into the NeRF framework. We use a modified volume rendering function to render low-light scene taking the Concealing Fields into account.</font>
+  <font size=0.5> Overview of the Aleth-NeRF architecture. Local and Global Concealing Fields are additionally learned and integrated into the NeRF framework. We use a modified volume rendering function to render low-light scene taking the Concealing Fields into account. While in the testing stage, the concealing fields would be taken off to render normal-light scene.</font>
 </p>
 
 

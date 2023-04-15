@@ -32,6 +32,15 @@ Common capture low-light scenes are challenging for most computer vision techniq
   <font size=0.5> We assume objects are naturally visible. However, the Concealing Field attenuates the light in the viewing direction, making the left user see a low-light scene. Aleth-NeRF takes a low-light image as input and unsupervisly learns the distribution of the Concealing Field. Then, we unconceal (alethia) the Concealing field to render the enhanced image.</font>
 </p>
 
+<!-- ![image](pics/model.png) -->
+<div align="center">
+  <img src="./pics/Methods.png" height="300">
+</div>
+<p align="left">
+  <font size=0.5> Overview of the Aleth-NeRF architecture. Local and Global Concealing Fields are additionally learned and integrated into the NeRF framework. We use a modified volume rendering function to render low-light scene taking the Concealing Fields into account.</font>
+</p>
+
+
 <br/>
 
 ## :key: Enviroment setup:

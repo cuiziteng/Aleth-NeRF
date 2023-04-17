@@ -154,7 +154,7 @@ $ CUDA_VISIBLE_DEVICES=0,1,2,3 python3 run.py --ginc configs/LOM/aleth_nerf/alet
 
 ### (4). Optional-1: Comparision Methods on LOM dataset
 
-1. Training NeRF on low-light images, "*buu*" scene training for example:
+1. Training original NeRF on low-light images, "*buu*" scene training for example:
 
 ```
 $ CUDA_VISIBLE_DEVICES=0,1,2,3 python3 run.py --ginc configs/LOM/nerf/nerf_buu.gin

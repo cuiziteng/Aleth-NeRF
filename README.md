@@ -111,7 +111,7 @@ data
 
 ### (2). Training Aleth-NeRF
 
-By default, we use 4 GPUs to train Aleth-NeRF on LOM dataset (around **3 hours ~ 4 hours** per scene), you can also change to other GPU number. We take "*buu*" scene training for example:
+By default, we use 4 GPUs to train Aleth-NeRF on LOM dataset (around **3 hours ~ 4 hours** per scene), you can also change to other GPU number or GPU id depend on your own device. We take "*buu*" scene training for example:
 
 ```
 $ CUDA_VISIBLE_DEVICES=0,1,2,3 python3 run.py --ginc configs/LOM/aleth_nerf/aleth_nerf_buu.gin --eta 0.1

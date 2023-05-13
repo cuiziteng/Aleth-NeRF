@@ -279,7 +279,7 @@ class LitAleth_NeRF(LitModel):
                 setattr(self, name, value)
 
         super(LitAleth_NeRF, self).__init__()
-        self.model = Aleth_NeRF(K_g=K_g, K_l=K_l) # put Night-NERF on the optimizer
+        self.model = Aleth_NeRF(K_g=K_g, K_l=K_l) # put Aleth-NERF on the optimizer
         self.overall_g = overall_g
         self.eta = eta
         

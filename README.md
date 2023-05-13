@@ -203,4 +203,28 @@ Code is based on [NeRF-Factory](https://github.com/kakaobrain/nerf-factory), muc
 
 **(1)**.  **Transformer for Low-light enhancement and exposure correction**, **BMVC 2022**: *You Only Need 90K Parameters to Adapt Light: a Light Weight Transformer for Image Enhancement and Exposure Correction* [(code)](https://github.com/cuiziteng/Illumination-Adaptive-Transformer) [(paper)](https://bmvc2022.mpi-inf.mpg.de/0238.pdf).
 
+```
+@inproceedings{Cui_2022_BMVC,
+author    = {Ziteng Cui and Kunchang Li and Lin Gu and Shenghan Su and Peng Gao and ZhengKai Jiang and Yu Qiao and Tatsuya Harada},
+title     = {You Only Need 90K Parameters to Adapt Light: a Light Weight Transformer for Image Enhancement and Exposure Correction},
+booktitle = {33rd British Machine Vision Conference 2022, {BMVC} 2022, London, UK, November 21-24, 2022},
+publisher = {{BMVA} Press},
+year      = {2022},
+url       = {https://bmvc2022.mpi-inf.mpg.de/0238.pdf}
+}
+```
+
 **(2)**.  **Object detection in Low-light Condition**, **ICCV 2021**: *Multitask AET with Orthogonal Tangent Regularity for Dark Object Detection* [(code)](https://github.com/cuiziteng/ICCV_MAET) [(paper)](https://openaccess.thecvf.com/content/ICCV2021/papers/Cui_Multitask_AET_With_Orthogonal_Tangent_Regularity_for_Dark_Object_Detection_ICCV_2021_paper.pdf).
+
+```
+@InProceedings{Cui_2021_ICCV,
+    author    = {Cui, Ziteng and Qi, Guo-Jun and Gu, Lin and You, Shaodi and Zhang, Zenghui and Harada, Tatsuya},
+    title     = {Multitask AET With Orthogonal Tangent Regularity for Dark Object Detection},
+    booktitle = {Proceedings of the IEEE/CVF International Conference on Computer Vision (ICCV)},
+    month     = {October},
+    year      = {2021},
+    pages     = {2553-2562}
+}
+```
+
+

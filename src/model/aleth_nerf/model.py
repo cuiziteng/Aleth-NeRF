@@ -421,8 +421,6 @@ class LitAleth_NeRF(LitModel):
         
         rgbs = self.alter_gather_cat(outputs, "rgb", all_image_sizes)
         depths = self.alter_gather_cat(outputs, "depth", all_image_sizes)
-        darknesss = self.alter_gather_cat_conceil(outputs, "darkness", all_image_sizes)
-        sigmas = self.alter_gather_cat_conceil(outputs, "sigma", all_image_sizes)
         visual_dir = os.path.join(self.logdir, "visual")
         os.makedirs(visual_dir, exist_ok=True)
         

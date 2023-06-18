@@ -185,7 +185,9 @@ If you want to editing the code or find out details of Aleth-NeRF, direct refer 
 
 **Acknowledgement:**
 
-Code is based on [NeRF-Factory](https://github.com/kakaobrain/nerf-factory), much thanks to their excellent codebase! Also if you use **LOM** dataset or our code & paper help you, please consider cite our work:
+Code is based on [NeRF-Factory](https://github.com/kakaobrain/nerf-factory), much thanks to their excellent codebase! 
+
+Also if you use **LOM** dataset or our code & paper help you, please consider cite our work:
 
 ```
 @misc{cui2023alethnerf,

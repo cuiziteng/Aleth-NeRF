@@ -37,7 +37,7 @@ The standard Neural Radiance Fields (NeRF) paradigm employs a viewer-centered me
 
 <br/>
 
-## :house: Enviroment setup:
+## Enviroment setup:
 
 We build the environment follow [NeRF-Factory projcet](https://github.com/kakaobrain/nerf-factory):
 
@@ -59,7 +59,7 @@ $ pip3 install -r requirements.txt
 
 <br/>
 
-## :house: Usage:
+## Usage:
 
 ### (1). Proposed dataset
 
@@ -137,7 +137,7 @@ if you want to render out videos with novel views, direct add "--ginb run.run_re
 $ CUDA_VISIBLE_DEVICES=0,1,2,3 python3 run.py --ginc configs/LOM/aleth_nerf/aleth_nerf_buu.gin --logbase ./logs --ginb run.run_train=False --ginb run.run_render=True
 ```
 
-### (4). Optional: Comparision Methods on LOM dataset
+### (4). Comparision Methods on LOM dataset
 
 1. Training original NeRF on low-light images, "*buu*" scene training for example:
 
@@ -153,13 +153,13 @@ $ CUDA_VISIBLE_DEVICES=0,1,2,3 python3 run.py --ginc configs/LOM/compare_methods
 
 <br/>
 
-## :house: Others:
+## Others:
 
 If you want to editing the code or find out details of Aleth-NeRF, direct refer to [model.py](src/model/aleth_nerf/model.py) and [helper.py](src/model/nerf/helper.py).
 
 <br/>
 
-##  :book: Reference and Related Works:
+## Reference and Related Works:
 
 **Acknowledgement:**
 

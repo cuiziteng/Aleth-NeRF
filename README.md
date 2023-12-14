@@ -37,7 +37,7 @@ The standard Neural Radiance Fields (NeRF) paradigm employs a viewer-centered me
 
 <br/>
 
-## :key: Enviroment setup:
+## :house: Enviroment setup:
 
 We build the environment follow [NeRF-Factory projcet](https://github.com/kakaobrain/nerf-factory):
 
@@ -59,7 +59,7 @@ $ pip3 install -r requirements.txt
 
 <br/>
 
-## :computer: Usage:
+## :house: Usage:
 
 ### (1). Proposed dataset
 
@@ -153,7 +153,7 @@ $ CUDA_VISIBLE_DEVICES=0,1,2,3 python3 run.py --ginc configs/LOM/compare_methods
 
 <br/>
 
-## :smile: Others:
+## :house: Others:
 
 If you want to editing the code or find out details of Aleth-NeRF, direct refer to [model.py](src/model/aleth_nerf/model.py) and [helper.py](src/model/nerf/helper.py).
 

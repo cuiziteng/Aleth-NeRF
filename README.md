@@ -125,7 +125,7 @@ $ bash run/run_LOM_aleth.sh
 
 ### (3). Evaluation with pre-train weights
 
-You could also download our pre-train weights for direct model evaluation [low-light logs, g-drive](https://drive.google.com/file/d/1uKmeId2wVAYs205c59dK7HYj_ju-NO_z/view?usp=sharing), [over-exposure logs, g-drive](https://drive.google.com/file/d/1dcwwBNs5nV8cMMzRLJbLA-4HzmnbO8nY/view?usp=sharing), then unzip the file under this folder ($./logs$), test each scene as follow:
+You could also download our pre-train weights for direct model evaluation [(low-light logs, g-drive)](https://drive.google.com/file/d/1uKmeId2wVAYs205c59dK7HYj_ju-NO_z/view?usp=sharing), [(over-exposure logs, g-drive)](https://drive.google.com/file/d/1dcwwBNs5nV8cMMzRLJbLA-4HzmnbO8nY/view?usp=sharing), then unzip the file under this folder ($./logs$), test each scene as follow:
 
 ```
 $ CUDA_VISIBLE_DEVICES=0,1,2,3 python3 run.py --ginc configs/LOM/aleth_nerf/aleth_nerf_buu.gin --logbase ./logs --ginb run.run_train=False

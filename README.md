@@ -27,7 +27,7 @@ The standard Neural Radiance Fields (NeRF) paradigm employs a viewer-centered me
 
 <!-- ![image](pics/model.png) -->
 <div align="center">
-  <img src="./pics/buu.png" height="300">
+  <img src="./pics/buu.png" height="500">
 </div>
 <p align="left">
   <font size=0.5> We assume objects are naturally visible. However, the Concealing Field attenuates the light in the viewing direction, making the people see a low-light scene. (c). Remove the concealing field, we can render out normal-light images in low-light scenes. (d). Add the concealing field, we can render out normal-light in over-exposure scenes. </font>

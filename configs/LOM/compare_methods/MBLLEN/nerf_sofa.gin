@@ -2,7 +2,7 @@
 
 run.dataset_name = "blender"
 run.datadir = "./data/LOM_full"
-run.scene_name = "chair"
+run.scene_name = "sofa"
 
 LitData.batch_sampler = "single_image"
 
@@ -13,7 +13,7 @@ LitData.chunk = 8192
 LitData.use_pixel_centers = True
 LitData.epoch_size = 12500
 LitDataBlender.white_bkgd = False
-LitDataBlender.compare_method = "enh_LIME"
+LitDataBlender.compare_method = "Low_light_enhance/enh_MBLLEN"
 
 run.max_steps = 62500
 run.log_every_n_steps = 100

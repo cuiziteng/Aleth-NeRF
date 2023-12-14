@@ -18,6 +18,7 @@ from src.data.sampler import (
     MultipleImageDDPSampler,
     MultipleImageDynamicDDPSampler,
     SingleImageDDPSampler,
+    FullImageDDPSampler,
 )
 
 
@@ -193,6 +194,18 @@ class LitData(pl.LightningDataModule):
 
         if self.batch_sampler == "single_image":
             sampler = SingleImageDDPSampler(
+                batch_size=self.batch_size,
+                num_replicas=None,
+                rank=None,
+                N_img=len(self.i_train),
+                N_pixels=self.image_sizes[self.i_train],
+                epoch_size=self.epoch_size,
+                tpu=False,
+                precrop=self.precrop,
+                precrop_steps=self.precrop_steps,
+            )
+        elif self.batch_sampler == "full_image":
+            sampler = FullImageDDPSampler(
                 batch_size=self.batch_size,
                 num_replicas=None,
                 rank=None,

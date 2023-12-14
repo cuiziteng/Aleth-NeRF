@@ -21,7 +21,6 @@ from pytorch_lightning.callbacks import (
     TQDMProgressBar,
 )
 from pytorch_lightning.plugins import DDPPlugin
-
 from utils.select_option import select_callback, select_dataset, select_model
 
 
@@ -50,10 +49,8 @@ def run(
     postfix: Optional[str] = None,
     entity: Optional[str] = None,
     # Hyper Parameter in Aleth-NeRF
-    K_l: float = 0.5,
-    K_g: float = 0.5,
-    eta: float = 0.2,
-    overall_g: float = 1.0,
+    con: float = 10,    # set here to 2 for over-exposure conditions
+    eta: float = 0.4,
     # Optimization
     max_steps: int = -1,
     max_epochs: int = -1,
@@ -77,8 +74,8 @@ def run(
     logging.getLogger("lightning").setLevel(logging.ERROR)
     datadir = datadir.rstrip("/")
     
-    exp_name = (model_name + "_" + dataset_name + "_" + scene_name + "_" + str(seed).zfill(3) + \
-        'eta' + str(eta))
+    exp_name = (model_name + "_" + dataset_name + "_" + scene_name + "_" +  \
+        'eta' + str(eta) + 'con' + str(con))
 
     if postfix is not None:
         exp_name += "_" + postfix
@@ -92,7 +89,7 @@ def run(
         num_devices = 1
 
     if logbase is None:
-        logbase = "/data/unagi0/cui_data/Night_NeRF/logs_ablation"
+        logbase = "/logs"
 
     os.makedirs(logbase, exist_ok=True)
     logdir = os.path.join(logbase, exp_name)
@@ -167,8 +164,7 @@ def run(
         datadir=datadir,
     )
 
-    model = select_model(model_name=model_name, K_g = K_g, 
-                        K_l = K_l, eta = eta, overall_g = overall_g) # model define
+    model = select_model(model_name=model_name, eta = eta, con=con) # model define
     model.logdir = logdir
     if run_train:   # Training
         best_ckpt = os.path.join(logdir, "best.ckpt")
@@ -224,10 +220,9 @@ if __name__ == "__main__":
     parser.add_argument(
         "--ckpt_path", type=str, default=None, help="path to checkpoints"
     )
-    parser.add_argument("--K_l", type=float, default=0.3, help="Local Concealing Range")
-    parser.add_argument("--K_g", type=float, default=0.3, help="Global Concealing Initial Value")
-    parser.add_argument("--eta", type=float, default=0.1, help="Concealing Degree Control")
-    parser.add_argument("--overall_g", type=float, default=1.0, help="Overall Gain for Final Enhancement, default 1.0")
+
+    parser.add_argument("--eta", type=float, default=0.4, help="Concealing Control Degree")
+    parser.add_argument("--con", type=float, default=10.0, help="Concealing Contrast Degree")
     parser.add_argument("--seed", type=int, default=220901, help="seed to use")
     parser.add_argument("--logbase", type=str, default="./logs", help="seed to use")
     args = parser.parse_args()
@@ -244,10 +239,8 @@ if __name__ == "__main__":
         logbase=args.logbase,
         ginc=args.ginc,
         ginb=ginbs,
-        K_l=args.K_l,
-        K_g=args.K_g,
         eta=args.eta,
-        overall_g=args.overall_g,
+        con=args.con,
         resume_training=args.resume_training,
         ckpt_path=args.ckpt_path,
         seed=args.seed,

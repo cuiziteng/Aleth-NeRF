@@ -95,8 +95,6 @@ class LitModel(pl.LightningModule):
     def psnr(self, preds, gts, i_train, i_val, i_test):
         ret = {}
         ret["name"] = "PSNR"
-        print(preds)
-        print(gts)
         psnr_list = self.psnr_each(preds, gts)
         ret["mean"] = psnr_list.mean().item()
         if self.trainer.datamodule.eval_test_only:

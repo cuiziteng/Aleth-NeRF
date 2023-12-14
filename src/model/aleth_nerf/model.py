@@ -22,7 +22,6 @@ import torch.nn.init as init
 import matplotlib.pyplot as plt
 
 
-from src.model.aleth_nerf.kernel import get_gaussian_kernel, mean_filter    # optional to replace Convolution
 import src.model.aleth_nerf.helper as helper
 import utils.store_image as store_image
 from src.model.interface import LitModel    # Notice Here
@@ -141,8 +140,7 @@ class NeRFMLP(nn.Module):
 class Aleth_NeRF(nn.Module):
     def __init__(
         self,
-        K_g: float = 0.3,   # Global Density Control
-        K_l: float = 0.3,     # Local Density Control, not use
+        K_g: float = 0.5,   # Initial Global Density Value
         num_levels: int = 2,    
         min_deg_point: int = 0,
         max_deg_point: int = 10,
@@ -162,12 +160,11 @@ class Aleth_NeRF(nn.Module):
         self.rgb_activation = nn.Sigmoid()
         self.sigma_activation = nn.ReLU()
         self.dark_activation = nn.Sigmoid()
+        #self.dark_activation = nn.ReLU()
 
-        self.K_l = K_l  
         self.K_g = K_g  # global conceiling field initial value
         self.coarse_mlp = NeRFMLP(min_deg_point, max_deg_point, deg_view)   
         self.fine_mlp = NeRFMLP(min_deg_point, max_deg_point, deg_view)
-        
         # global conceiling field
         self.coarse_dark = nn.Parameter(K_g * torch.ones(num_coarse_samples + 1), requires_grad=True) # 65
         self.fine_dark = nn.Parameter(K_g * torch.ones(num_fine_samples + num_coarse_samples + 1), requires_grad=True)  # 193
@@ -264,10 +261,8 @@ class Aleth_NeRF(nn.Module):
 class LitAleth_NeRF(LitModel):
     def __init__(
         self,
-        K_g: float = 0.5,         # Global Concealing Initial Value
-        K_l: float = 0.5,         # Local Concealing Range
-        eta: float = 0.2,         # Concealing Degree Control
-        overall_g: float = 1.0,   # Overall Gain for Final Adjustment, default 1.0
+        eta: float = 0.4,         # Enhance Lightness Degree (0.35~0.55 all OK)
+        con: float = 10,         # Enhance Contrast Degree
         lr_init: float = 5.0e-4,
         lr_final: float = 5.0e-6,
         lr_delay_steps: int = 2500,
@@ -279,9 +274,10 @@ class LitAleth_NeRF(LitModel):
                 setattr(self, name, value)
 
         super(LitAleth_NeRF, self).__init__()
-        self.model = Aleth_NeRF(K_g=K_g, K_l=K_l) # put Night-NERF on the optimizer
-        self.overall_g = overall_g
+        self.model = Aleth_NeRF() # put Aleth-NERF on the optimizer
         self.eta = eta
+        self.con = con
+        
         
 
     def setup(self, stage: Optional[str] = None) -> None:
@@ -294,10 +290,10 @@ class LitAleth_NeRF(LitModel):
         rendered_results = self.model(
             batch, self.randomized, self.white_bkgd, self.near, self.far, mode = 'train'
         )
-        rgb_coarse_dark, rgb_fine_dark = rendered_results[0][0], rendered_results[1][0]
+        rgb_coarse_dark, rgb_fine_dark = rendered_results[0][0], rendered_results[1][0]     # low light RGB
         l_conceil_coarse, l_conceil_fine = rendered_results[0][1], rendered_results[1][1]   # local conceiling
         l_density_coarse, l_density_fine = rendered_results[0][2], rendered_results[1][2]   # density
-        rgb_coarse_light, rgb_fine_light = rendered_results[0][-1], rendered_results[1][-1]
+        rgb_coarse_light, rgb_fine_light = rendered_results[0][-1], rendered_results[1][-1] # normal light RGB
         
         target = batch["target"]
         # target_mean = torch.mean(target, dim=-1)    # RGB mean
@@ -306,28 +302,26 @@ class LitAleth_NeRF(LitModel):
         mean_rgb_fine = torch.mean(rgb_fine_light, dim=0)
         
         # NeRF Loss
-        loss0 = helper.img2mse(rgb_coarse_dark, target)
-        loss1 = helper.img2mse(rgb_fine_dark, target)
-
+        loss0 = helper.img2mse_tone(rgb_coarse_dark, target)
+        loss1 = helper.img2mse_tone(rgb_fine_dark, target)
         # Local Conceiling Control Loss
-        loss_control = helper.Exp_loss(mean_val=self.eta)(l_conceil_coarse) + helper.Exp_loss(mean_val=self.eta)(l_conceil_fine) 
-        #loss_control = helper.Exp_loss_global(mean_val=self.eta)(l_conceil_coarse) + helper.Exp_loss_global(mean_val=self.eta)(l_conceil_fine)   # twilight
-        
+        loss_control = helper.Exp_loss_global(mean_val=self.eta)(rgb_coarse_light) + helper.Exp_loss_global(mean_val=self.eta)(rgb_fine_light)   # twilight
+
         target = target.type(torch.FloatTensor).to(rgb_fine_dark.device)
-        loss_structure = helper.Structure_Loss(contrast=0.5/self.eta)(target, rgb_coarse_light) + helper.Structure_Loss(contrast=0.5/self.eta)(target, rgb_fine_light)
-        #loss_structure = helper.Structure_Loss(contrast=0.2/self.eta)(target, rgb_coarse_light) + helper.Structure_Loss(contrast=0.2/self.eta)(target, rgb_fine_light)
+        loss_structure = helper.Structure_Loss(contrast=self.eta * self.con)(target, rgb_coarse_light) + helper.Structure_Loss(contrast=self.eta * self.con)(target, rgb_fine_light)
         loss_cc = helper.colour(mean_rgb_coarse) + helper.colour(mean_rgb_fine)
         
-        loss = loss1 + loss0  + 1e-4*loss_control + 1e-3*loss_structure + 1e-4*loss_cc   # dark
-        #loss = loss1 + loss0  + 1e-2*loss_control + 1e-2*loss_structure + 1e-3*loss_cc  # twilight
+        loss = loss1 + loss0  + 1e-3*loss_control + 1e-3*loss_structure + 1e-8*loss_cc    # dark
+        
+         
         psnr0 = helper.mse2psnr(loss0)
         psnr1 = helper.mse2psnr(loss1)
         
         # Logging in Tensorboard
         self.log("train/psnr1", psnr1, on_step=True, prog_bar=True, logger=True)
         self.log("train/psnr0", psnr0, on_step=True, prog_bar=True, logger=True)
-        self.log("train/loss_cc", 1e-4*loss_cc, on_step=True)
-        self.log("train/loss_control", 1e-4*loss_control, on_step=True)
+        self.log("train/loss_cc", 1e-8*loss_cc, on_step=True)
+        self.log("train/loss_control", 1e-3*loss_control, on_step=True)
         self.log("train/loss_structure", 1e-3*loss_structure, on_step=True)
 
         return loss
@@ -340,13 +334,12 @@ class LitAleth_NeRF(LitModel):
             batch, False, self.white_bkgd, self.near, self.far, mode = 'test'
         )
         
-        rgb_fine = rendered_results[1][0] * self.overall_g
-        
+        rgb_fine = rendered_results[1][0]
         depth_fine = rendered_results[1][1]
-        depth_fine = torch.stack([depth_fine,depth_fine,depth_fine], dim=-1)
+        depth_fine = torch.stack([depth_fine, depth_fine, depth_fine], dim=-1)
         
-        sigma = rendered_results[1][2]
-        darkness = rendered_results[1][-1]
+        #sigma = rendered_results[1][2]
+        #darkness = rendered_results[1][-1]
 
         rgb_fine = torch.clip(rgb_fine, 0, 1)
         target = batch["target"]
@@ -354,8 +347,8 @@ class LitAleth_NeRF(LitModel):
         ret["target"] = target
         ret["rgb"] = rgb_fine
         ret["depth"] = depth_fine
-        ret["darkness"] = darkness
-        ret["sigma"] = sigma
+        #ret["darkness"] = darkness
+        #ret["sigma"] = sigma
         return ret
     
     def validation_step(self, batch, batch_idx):
@@ -421,8 +414,6 @@ class LitAleth_NeRF(LitModel):
         
         rgbs = self.alter_gather_cat(outputs, "rgb", all_image_sizes)
         depths = self.alter_gather_cat(outputs, "depth", all_image_sizes)
-        darknesss = self.alter_gather_cat_conceil(outputs, "darkness", all_image_sizes)
-        sigmas = self.alter_gather_cat_conceil(outputs, "sigma", all_image_sizes)
         visual_dir = os.path.join(self.logdir, "visual")
         os.makedirs(visual_dir, exist_ok=True)
         
@@ -445,8 +436,6 @@ class LitAleth_NeRF(LitModel):
             os.makedirs(depth_dir, exist_ok=True)
             store_image.store_image(image_dir, rgbs)
             store_image.store_depth(depth_dir, depths)
-            #store_image.store_video(image_dir, rgbs)
-            #store_image.store_video_depth(depth_dir, depths)
             result_path = os.path.join(self.logdir, "results.json")
             self.write_stats(result_path, psnr, ssim, lpips)
 

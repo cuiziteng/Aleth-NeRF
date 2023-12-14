@@ -1,6 +1,6 @@
 ### Blender Specific Arguments
 
-run.dataset_name = "blender_pair"
+run.dataset_name = "blender"
 run.datadir = "./data/LOM_full"
 run.scene_name = "shrub"
 

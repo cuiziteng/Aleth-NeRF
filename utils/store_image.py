@@ -16,7 +16,6 @@ def to8b(x):
     return (255 * np.clip(x, 0, 1)).astype(np.uint8)
 
 def to8b_depth(x):
-    print((255 * np.clip(x, 0, 1)).astype(np.uint8))
     return (255 * np.clip(x, 0, 1)).astype(np.uint8)
 
 def norm8b(x):
@@ -51,8 +50,6 @@ def store_depth(dirpath, rgbs):
         rgbimg.save(imgpath)
 
 def store_video(dirpath, rgbs):
-    for i, rgb in enumerate(rgbs):
-        print(i)
 
     rgbimgs = [to8b(rgb.cpu().detach().numpy()) for rgb in rgbs]
     video_dir = os.path.join(dirpath, "videos")
@@ -62,7 +59,6 @@ def store_video(dirpath, rgbs):
 def store_video_depth(dirpath, rgbs):
     for i, rgb in enumerate(rgbs):
         rgbs[i] = (rgb - torch.min(rgb))/ (torch.max(rgb) - torch.min(rgb))
-        print(i)
 
     rgbimgs = [to8b_depth(rgb.cpu().detach().numpy()) for rgb in rgbs]
     video_dir = os.path.join(dirpath, "videos")

@@ -133,7 +133,7 @@ class LitDataLLFF(LitData):
         datadir: str,
         scene_name: str,
         # LLFF specific arguments
-        factor: int = 8,    # Here use factor 8 for faster training
+        factor = 8,    # Here use factor 8 for faster training
         llffhold: int = 8,
         spherify: bool = False,
         path_zflat: bool = False,

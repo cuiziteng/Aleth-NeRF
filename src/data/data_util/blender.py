@@ -68,7 +68,8 @@ def load_blender_data(
     # for s in splits:
     #     with open(os.path.join(basedir, compare_method, "transforms_{}_gt.json".format(s)), "r") as fp:
     #         metas[s] = json.load(fp)
-
+    
+    #print('compare_method', compare_method)
     fp_train = open(os.path.join(basedir, compare_method, "transforms_train.json"), "r") # training file
     fp_val = open(os.path.join(basedir, "transforms_val.json"), "r") # evaluation file
     fp_test = open(os.path.join(basedir, "transforms_test.json"), "r")  # testing file
@@ -122,13 +123,29 @@ def load_blender_data(
     )
     image_sizes = np.array([[h, w] for _ in range(num_frame)])
 
+    # rendering poses in LOM dataset
     render_poses = torch.stack(
         [
-            pose_spherical(angle, -30.0, 4.0) @ cam_trans
-            for angle in np.linspace(-180, 180, 40 + 1)[:-1]
+            pose_spherical(angle, -10.0, 4.0) @ cam_trans
+            for angle in np.linspace(70, 110, 30 + 1)[:-1]
         ],
         0,
     ) 
+
+    render_poses2 = torch.stack([
+            pose_spherical(110, angle2, 4.0) @ cam_trans
+            for angle2 in np.linspace(-10, 10, 20 + 1)[:-1]
+        ],
+        0,)
+
+    render_poses3 = torch.stack([
+            pose_spherical(110*i, 10, 4.0*i) @ cam_trans
+            for i in np.linspace(1, 0.8, 20 + 1)[:-1]
+        ],
+        0,)
+
+    render_poses = torch.cat((render_poses,render_poses2,render_poses3), 0)
+
     render_poses[:, :3, 3] *= cam_scale_factor
     near = 2.0
     far = 6.0

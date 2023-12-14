@@ -26,11 +26,11 @@ from src.model.nerfpp.model import LitNeRFPP
 from src.model.plenoxel.model import LitPlenoxel
 from src.model.refnerf.model import LitRefNeRF
 from src.model.aleth_nerf.model import LitAleth_NeRF
+from src.model.aleth_nerf_exp.model import LitAleth_NeRF_Exp
 
 
 def select_model(
-    model_name: str, K_g: float,    
-    K_l: float, eta:float, overall_g: float, 
+    model_name: str, eta:float, con:float
 ):
 
     if model_name == "nerf":
@@ -48,7 +48,9 @@ def select_model(
     elif model_name == "mipnerf360":
         return LitMipNeRF360()
     elif model_name == 'aleth_nerf':
-        return LitAleth_NeRF(K_g, K_l, eta, overall_g)
+        return LitAleth_NeRF(eta=eta, con=con)
+    elif model_name == 'aleth_nerf_exp':
+        return LitAleth_NeRF_Exp(eta=eta, con=con)
 
     else:
         raise f"Unknown model named {model_name}"

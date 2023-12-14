@@ -69,10 +69,17 @@ class SingleImageDDPSampler(DDPSampler):
         image_choice = np.random.choice(
             np.arange(self.N_img), self.epoch_size, replace=True
         )
+        #print(image_choice)
         image_shape = self.N_pixels[image_choice]
-        if not self.precrop:
+        if not self.precrop:    # True
+            
+            # id_choice = [
+            #     np.random.randint(image_shape[i, 0] * image_shape[i, 1] - self.batch_size)
+            #     for i in range(self.epoch_size)
+            # ]
+            # idx_choice = [np.arange(id, id+self.batch_size) for id in id_choice]
             idx_choice = [
-                np.random.choice(
+                np.random.choice(   # 随机从每张图中任意挑选的self.batch_size个pixel,不连续
                     np.arange(image_shape[i, 0] * image_shape[i, 1]), self.batch_size
                 )
                 for i in range(self.epoch_size)
@@ -113,6 +120,59 @@ class SingleImageDDPSampler(DDPSampler):
         idx_shift = idx_shift[:, self.rank :: self.num_replicas]
 
         return iter(idx_shift)
+
+    def __len__(self):
+        return self.epoch_size
+
+
+class FullImageDDPSampler(DDPSampler):
+    def __init__(
+        self,
+        batch_size,
+        num_replicas,
+        rank,
+        N_img,
+        N_pixels,
+        epoch_size,
+        tpu,
+        precrop,
+        precrop_steps,
+    ):
+        super(FullImageDDPSampler, self).__init__(batch_size, num_replicas, rank, tpu)
+        self.N_pixels = N_pixels
+        self.N_img = N_img
+        self.epoch_size = epoch_size
+        self.precrop = precrop
+        self.precrop_steps = precrop_steps
+
+    def __iter__(self):
+        image_choice = np.random.choice(
+            np.arange(self.N_img), self.epoch_size, replace=True
+        )
+        #print(image_choice)
+        image_shape = self.N_pixels[image_choice]
+
+        # idx_choice = [
+        #     np.random.choice(   # 随机从每张图中任意挑选的self.batch_size个pixel,不连续
+        #         np.arange(image_shape[i, 0] * image_shape[i, 1]), self.batch_size
+        #     )
+        #     for i in range(self.epoch_size)
+        # ]
+        idx_choice = [np.arange(image_shape[i, 0]//2 * image_shape[i, 1]//2) for i in range(self.epoch_size)]
+        #print(idx_choice)
+
+        idx_choice = np.stack(idx_choice)
+        idx_jump = np.concatenate(
+            [
+                np.zeros_like(self.N_pixels[0]),
+                np.cumsum(self.N_pixels[:-1, 0] * self.N_pixels[:-1, 1]),
+            ]
+        )[..., None]
+        idx_shift = idx_jump[image_choice] + idx_choice
+        idx_shift = idx_shift[:, self.rank :: self.num_replicas]
+
+        return iter(idx_shift)
+        
 
     def __len__(self):
         return self.epoch_size

@@ -1,12 +1,13 @@
-# Aleth-NeRF: Low-light Condition View Synthesis with Concealing Fields [(Website)](https://cuiziteng.github.io/Aleth_NeRF_web/) [(ArXiv)](https://arxiv.org/abs/2303.05807)
+# [AAAI 2024] Aleth-NeRF: Illumination Adaptive NeRF with Concealing Field Assumption [(Website)](https://cuiziteng.github.io/Aleth_NeRF_web/) [(Paper)](https://arxiv.org/abs/2303.05807)
 
 [Ziteng Cui<sup>1,2</sup>](https://cuiziteng.github.io/), 
-[Lin Gu<sup>3,2</sup>](https://sites.google.com/view/linguedu/home), 
+[Lin Gu<sup>3,1</sup>](https://sites.google.com/view/linguedu/home), 
 [Xiao Sun<sup>2*</sup>](https://jimmysuen.github.io/), 
+[Xianzheng Ma<sup>4</sup>](https://xianzhengma.github.io/), 
 [Yu Qiao<sup>2</sup>](http://mmlab.siat.ac.cn/yuqiao/), 
-[Tatsuya Harada<sup>2,3</sup>](https://www.mi.t.u-tokyo.ac.jp/harada/). 
+[Tatsuya Harada<sup>1,3</sup>](https://www.mi.t.u-tokyo.ac.jp/harada/). 
 
-<sup>1.</sup>The University of Tokyo, <sup>2.</sup>Shanghai AI Lab, <sup>3.</sup>RIKEN AIP
+<sup>1.</sup>The University of Tokyo, <sup>2.</sup>Shanghai AI Lab, <sup>3.</sup>RIKEN AIP, <sup>4.</sup>University of Oxford
 
 <br/>
 
@@ -22,38 +23,36 @@
 ## :house: Abstract
 
 
-Common capture low-light scenes are challenging for most computer vision techniques, including Neural Radiance Fields (NeRF). Vanilla NeRF is viewer-centred that simplifies the rendering process only as light emission from 3D locations in the viewing direction, thus failing to model the low-illumination induced darkness. Inspired by emission theory of ancient Greek that visual perception is accomplished by rays casting from eyes, we make slight modifications on vanilla NeRF to train on multiple views of low-light scene, we can thus render out the well-lit scene in an **unsupervised** manner. We introduce a surrogate concept, Concealing Fields, that reduce the transport of light during the volume rendering stage. Specifically, our proposed method, **Aleth-NeRF**, directly learns from the dark image to understand volumetric object representation and concealing field under priors. By simply eliminating Concealing Fields, we can render a single or multi-view well-lit image(s) and gain superior performance over other 2D low light enhancement methods. Additionally, we collect the first paired LOw-light and normal-light Multi-view **(LOM)** datasets for future research.
+The standard Neural Radiance Fields (NeRF) paradigm employs a viewer-centered methodology, entangling the aspects of illumination and material reflectance into emission solely from 3D points. This simplified rendering approach presents challenges in accurately modeling images captured under adverse lighting conditions, such as low light or over-exposure. Motivated by the ancient Greek emission theory that posits visual perception as a result of rays emanating from the eyes, we slightly refine the conventional NeRF framework to train NeRF under challenging light conditions and generate normal-light condition novel views unsupervised. We introduce the concept of a ”Concealing Field,” which assigns transmittance values to the surrounding air to account for illumination effects. In dark scenarios, we assume that object emissions maintain a standard lighting level but are attenuated as they traverse the air during the rendering process. Concealing Field thus compel NeRF to learn reasonable density and colour estimations for objects even in dimly lit situations. Similarly, the Concealing Field can mitigate over-exposed emissions during the rendering stage. Furthermore, we present a comprehensive multi-view dataset captured under challenging illumination conditions for evaluation. 
 
 <!-- ![image](pics/model.png) -->
 <div align="center">
-  <img src="./pics/Fig1.png" height="300">
+  <img src="./pics/buu.png" height="300">
 </div>
 <p align="left">
-  <font size=0.5> We assume objects are naturally visible. However, the Concealing Field attenuates the light in the viewing direction, making the left user see a low-light scene. Aleth-NeRF takes a low-light image as input and unsupervisly learns the distribution of the Concealing Field. Then, we unconceal (alethia) the Concealing field to render the enhanced image.</font>
+  <font size=0.5> We assume objects are naturally visible. However, the Concealing Field attenuates the light in the viewing direction, making the people see a low-light scene. (c). Remove the concealing field, we can render out normal-light images in low-light scenes. (d). Add the concealing field, we can render out normal-light in over-exposure scenes. </font>
 </p>
+
+
 
 <br/>
 
 ## :key: Enviroment setup:
 
-We build the environment follow [NeRF-Factory projcet](https://github.com/kakaobrain/nerf-factory), and please adapt to your own cuda version:
+We build the environment follow [NeRF-Factory projcet](https://github.com/kakaobrain/nerf-factory):
 
 ```
-1.
+1. 
 $ git clone https://github.com/cuiziteng/Aelth-NeRF.git
 
 $ cd Aleth-NeRF
 
-2.
+
+2. (You can adjust to your own torch and CUDA version)
 $ conda create -n aleth_nerf -c anaconda python=3.8
+$ conda activate aleth_nerf
 $ conda install pytorch==1.11.0 torchvision==0.12.0 torchaudio==0.11.0 cudatoolkit=11.3 -c pytorch
 $ pip3 install -r requirements.txt
-
-## Or you could directly build from nerf_factory.yml: 
-$ conda env create --file nerf_factory.yml
-
-3.
-$ conda activate aleth_nerf
 ```
 
 
@@ -62,13 +61,13 @@ $ conda activate aleth_nerf
 
 ## :computer: Usage:
 
-### (1). LOM dataset
+### (1). Proposed dataset
 
-We collect the first paired low and normal light multi-view images dataset, names **LOM** dataset. Download the **LOM** dataset from: [google drive](https://drive.google.com/file/d/1YBSHMSFmHxAHHS9qo_qdthchhl8IlKCP/view?usp=share_link) or [baiduyun (passwd: qeb7)](https://pan.baidu.com/s/1Y76ya8YniIe4GpjGVBzlOg). 
+We collect the first paired low-light & normal-light & over-exposure multi-view images dataset. Download the **LOM** dataset from: [google drive](https://drive.google.com/file/d/1Fhe4UZ4aIgiMHiVzizvvqWukLkefygmL/view?usp=sharing) or [baiduyun (passwd: cbhr)](https://pan.baidu.com/s/1Jx6wqbLvBVSHJRLNQYARlA). 
 
-LOM dataset contains 5 scenes (*buu* | *chair* | *sofa* | *bike* | *shrub*), each scene includes 25~65 paired multi-view normal-light and low-light images, and low-light images enhanced by different 2D low-light enhancement methods.
+LOM dataset contains 5 scenes (*buu* | *chair* | *sofa* | *bike* | *shrub*), each scene includes 25~65 paired multi-view normal-light & low-light images & over-exposure images, and low-light images enhanced by different 2D low-light enhancement methods.
 
-Unzip the download file, place LOM under $data$ folder, then LOM dataset format as follow:
+Unzip the download file, place LOM under $./data$ folder, then LOM dataset format as follow:
 
 ```
 data     
@@ -77,13 +76,16 @@ data
     └─── buu
         │─── colmap_sparse
         │─── colmap_text
-        │─── enh_HE (images enhanced by [Histogram Equlization])
-        │─── enh_LIME (images enhanced by [LIME, TIP 2017])
-        │─── enh_RetiNexNet (images enhanced by [RetiNexNet, BMVC 2018])
-        │─── enh_SCI (images enhanced by [SCI, CVPR 2022])
-        │─── enh_IAT (images enhanced by [IAT, BMVC 2022])
         │─── high (normal-light images)
         │─── low  (low-light images)
+        │─── over_exp  (over-exposure images)
+        │─── Low_light_enhance
+            │─── enh_RetiNexNet (enhanced by [RetiNexNet, BMVC 2018])
+            │─── enh_zerodce (enhanced by [Zero-DCE, CVPR 2020])
+            │─── enh_SCI (enhanced by [SCI, CVPR 2022])
+            │─── enh_IAT (enhanced by [IAT, BMVC 2022])
+            │─── enh_MBLLEN (enhanced by video enhance method [MBLLEN, BMVC 2018])
+            │─── enh_LLVE (enhanced by video enhance method [LLVE, CVPR 2021])
         │─── colamp.db
         │─── transforms_test.json (test scenes)
         │─── transforms_train.json (train scenes)
@@ -101,21 +103,21 @@ data
 
 ### (2). Training Aleth-NeRF
 
-By default, we use 4 GPUs to train Aleth-NeRF on LOM dataset (around **3 hours ~ 4 hours** per scene), you can also change to other GPU number. We take "*buu*" scene training for example:
+By default, we use 4 GPUs to train Aleth-NeRF on LOM dataset (around **2 hours ~ 2.5 hours** per scene), you can feel free to set other GPU number or GPU id depend on your own device. We take "*buu*" scene training for example:
+
+For low-light conditions:
 
 ```
-$ CUDA_VISIBLE_DEVICES=0,1,2,3 python3 run.py --ginc configs/LOM/aleth_nerf/aleth_nerf_buu.gin --eta 0.1
+$ CUDA_VISIBLE_DEVICES=0,1,2,3 python3 run.py --ginc configs/LOM/aleth_nerf/aleth_nerf_buu.gin --logbase ./logs
 ```
 
-Here the hyper-parameter conceal degree "--eta" : "$\eta$" (see Sec.3.3 and Sec.C in our paper), is default set to 0.1 in "*buu*" and "*sofa*" scenes, to 0.05 in "*shrub*", "*chair*" and "*bike*" scenes.
-
-Beyond, the "--overall_g" (adjust final render lightness, default 1.0) better set to 1.5 in "*bike*" and "*shrub*" scene. "*bike*" scene for example:
+For over-exposure conditions:
 
 ```
-$ CUDA_VISIBLE_DEVICES=0,1,2,3 python3 run.py --ginc configs/LOM/aleth_nerf/aleth_nerf_bike.gin --eta 0.05 --overall_g 1.5
+$ CUDA_VISIBLE_DEVICES=0,1,2,3 python3 run.py --ginc configs/LOM/aleth_nerf_exp/aleth_nerf_buu.gin --logbase ./logs_exp --con 2
 ```
 
-Or directly use following command to run all 5 scenes:
+You can also direct use following command to run all 5 scenes scenes together:
 
 ```
 $ bash run/run_LOM_aleth.sh
@@ -123,45 +125,31 @@ $ bash run/run_LOM_aleth.sh
 
 ### (3). Evaluation with pre-train weights
 
-You could also download our pre-train weights for direct model evaluation [google drive](https://drive.google.com/file/d/142G9GBqNRY_QiiYYCXXe8tcC5GbeDzxV/view?usp=share_link) or [baiduyun (passwd:gkiw)](https://pan.baidu.com/s/1-NyB3rDYrcT6rSQ7O0eRmw), then unzip the file under this folder (./logs), final test each scene as follow:
+You could also download our pre-train weights for direct model evaluation [low-light logs, g-drive](https://drive.google.com/file/d/1uKmeId2wVAYs205c59dK7HYj_ju-NO_z/view?usp=sharing), [over-exposure logs, g-drive](https://drive.google.com/file/d/1dcwwBNs5nV8cMMzRLJbLA-4HzmnbO8nY/view?usp=sharing), then unzip the file under this folder ($./logs$), test each scene as follow:
 
 ```
-# buu
-$ CUDA_VISIBLE_DEVICES=0,1,2,3 python3 run.py --ginc configs/LOM/aleth_nerf/aleth_nerf_buu.gin --ginb run.run_train=False
-
-# chair
-$ CUDA_VISIBLE_DEVICES=0,1,2,3 python3 run.py --ginc configs/LOM/aleth_nerf/aleth_nerf_buu.gin --eta 0.05 --ginb run.run_train=False
-
-# sofa
-$ CUDA_VISIBLE_DEVICES=0,1,2,3 python3 run.py --ginc configs/LOM/aleth_nerf/aleth_nerf_buu.gin --ginb run.run_train=False
-
-# bike
-$ CUDA_VISIBLE_DEVICES=0,1,2,3 python3 run.py --ginc configs/LOM/aleth_nerf/aleth_nerf_bike.gin --eta 0.05 --overall_g 1.5 --ginb run.run_train=False
-
-# shrub
-$ CUDA_VISIBLE_DEVICES=0,1,2,3 python3 run.py --ginc configs/LOM/aleth_nerf/aleth_nerf_shrub.gin --eta 0.05 --overall_g 1.5 --ginb run.run_train=False
+$ CUDA_VISIBLE_DEVICES=0,1,2,3 python3 run.py --ginc configs/LOM/aleth_nerf/aleth_nerf_buu.gin --logbase ./logs --ginb run.run_train=False
 ```
 
-### (4). Optional-1: Comparision Methods on LOM dataset
+if you want to render out videos with novel views, direct add "--ginb run.run_render=True": 
 
-1. Training NeRF on low-light images, "*buu*" scene training for example:
+```
+$ CUDA_VISIBLE_DEVICES=0,1,2,3 python3 run.py --ginc configs/LOM/aleth_nerf/aleth_nerf_buu.gin --logbase ./logs --ginb run.run_train=False --ginb run.run_render=True
+```
+
+### (4). Optional: Comparision Methods on LOM dataset
+
+1. Training original NeRF on low-light images, "*buu*" scene training for example:
 
 ```
 $ CUDA_VISIBLE_DEVICES=0,1,2,3 python3 run.py --ginc configs/LOM/nerf/nerf_buu.gin
 ```
 
-2. Training NeRF on low-light images enhanced by various 2D enhancement methods (HE, [LIME](https://ieeexplore.ieee.org/document/7782813), [RetiNexNet](https://daooshee.github.io/BMVC2018website/), [SCI](https://openaccess.thecvf.com/content/CVPR2022/papers/Ma_Toward_Fast_Flexible_and_Robust_Low-Light_Image_Enhancement_CVPR_2022_paper.pdf), [IAT](https://bmvc2022.mpi-inf.mpg.de/238/)), "*buu*" scene training for example:
+2. Training NeRF on low-light images enhanced by various 2D enhancement methods ([RetiNexNet](https://daooshee.github.io/BMVC2018website/), [Zero-DCE](https://li-chongyi.github.io/Proj_Zero-DCE.html), [SCI](https://openaccess.thecvf.com/content/CVPR2022/papers/Ma_Toward_Fast_Flexible_and_Robust_Low-Light_Image_Enhancement_CVPR_2022_paper.pdf), [IAT](https://bmvc2022.mpi-inf.mpg.de/238/), [MBLLEN](http://bmvc2018.org/contents/papers/0700.pdf), [LLVE](https://openaccess.thecvf.com/content/CVPR2021/html/Zhang_Learning_Temporal_Consistency_for_Low_Light_Video_Enhancement_From_Single_CVPR_2021_paper.html)), "*buu*" scene training for example:
 
 ```
-$ CUDA_VISIBLE_DEVICES=0,1,2,3 python3 run.py --ginc configs/LOM/compare_methods/HE(or LIME, RetiNexNet, SCI, IAT)/nerf_buu.gin
+$ CUDA_VISIBLE_DEVICES=0,1,2,3 python3 run.py --ginc configs/LOM/compare_methods/RetiNexNet(or SCI, IAT zerodce, MBLLEN, LLVE)/nerf_buu.gin
 ```
-
-### (5). Optional-2: LOL dataset training (Single Image Enhancement)
-
-**TBD**
-<!-- Aleth-NeRF is not designed for single image low-light enhancement. But you could also complete single image enhancement with our code (camera parameters are fixed): -->
-
-
 
 <br/>
 
@@ -175,22 +163,16 @@ If you want to editing the code or find out details of Aleth-NeRF, direct refer 
 
 **Acknowledgement:**
 
-Code is based on [NeRF-Factory](https://github.com/kakaobrain/nerf-factory), much thanks to their excellent codebase! Also if you use **LOM** dataset or our code & paper help you, please consider cite our work:
+Code is based on [NeRF-Factory](https://github.com/kakaobrain/nerf-factory), much thanks to their excellent codebase! Also if you use our dataset or our code & paper help you, please consider cite our work:
 
 ```
-@misc{cui2023alethnerf,
-      title={Aleth-NeRF: Low-light Condition View Synthesis with Concealing Fields}, 
-      author={Ziteng Cui and Lin Gu and Xiao Sun and Yu Qiao and Tatsuya Harada},
-      year={2023},
-      eprint={2303.05807},
-      archivePrefix={arXiv},
-      primaryClass={cs.CV}
+@inproceedings{cui_aleth_nerf,
+  title={Aleth-NeRF: Illumination Adaptive NeRF with Concealing Field Assumption},
+  author={Cui, Ziteng and Gu, Lin and Sun, Xiao and Ma, Xianzheng and Qiao, Yu and Harada, Tatsuya},
+  booktitle={Proceedings of the AAAI Conference on Artificial Intelligence},
+  year={2024}
 }
 ```
-<br/>
 
-**My Other Related Projects:**
 
-**(1)**.  **Transformer for Low-light enhancement and exposure correction**, **BMVC 2022**: *You Only Need 90K Parameters to Adapt Light: a Light Weight Transformer for Image Enhancement and Exposure Correction* [(code)](https://github.com/cuiziteng/Illumination-Adaptive-Transformer) [(paper)](https://bmvc2022.mpi-inf.mpg.de/0238.pdf).
 
-**(2)**.  **Object detection in Low-light Condition**, **ICCV 2021**: *Multitask AET with Orthogonal Tangent Regularity for Dark Object Detection* [(code)](https://github.com/cuiziteng/ICCV_MAET) [(paper)](https://openaccess.thecvf.com/content/ICCV2021/papers/Cui_Multitask_AET_With_Orthogonal_Tangent_Regularity_for_Dark_Object_Detection_ICCV_2021_paper.pdf).

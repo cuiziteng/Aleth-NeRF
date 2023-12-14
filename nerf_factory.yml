@@ -155,7 +155,7 @@ dependencies:
     - ipython-genutils==0.2.0
     - itsdangerous==2.1.2
     - jax==0.3.17
-    - jaxlib==0.3.15
+    - jaxlib
     - jinja2==3.1.2
     - json5==0.9.8
     - jsonschema==4.6.0
@@ -189,7 +189,6 @@ dependencies:
     - pillow-simd==9.0.0.post1
     - pip==22.1.2
     - piqa==1.2.2
-    - plenoxel==0.0.1
     - prometheus-client==0.14.1
     - prometheus-flask-exporter==0.20.1
     - promise==2.3
@@ -232,6 +231,7 @@ dependencies:
     - tornado==6.1
     - traitlets==5.2.2.post1
     - typing-extensions==4.3.0
+    - matplotlib==3.7.1
     - urllib3==1.26.12
     - wandb==0.13.2
     - webencodings==0.5.1

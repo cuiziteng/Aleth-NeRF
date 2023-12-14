@@ -89,7 +89,6 @@ def _load_data(basedir, factor=None, width=None, height=None, load_imgs=True):
     sh = imageio.imread(img0).shape
 
     sfx = ""
-    print(factor)
     if factor is not None:
         sfx = "_{}".format(factor)
         _minify(basedir, factors=[factor])
@@ -106,9 +105,10 @@ def _load_data(basedir, factor=None, width=None, height=None, load_imgs=True):
         sfx = "_{}x{}".format(width, height)
     else:
         factor = 1
-    #print('the factor is:', factor)
+    print('the factor is:', factor)
     #print('the sfx is:', sfx)
     imgdir = os.path.join(basedir, "images" + sfx)
+    print(imgdir)
     #imgdir = os.path.join(basedir, "images" + sfx + '_low')  # Caution
     #imgdir = os.path.join(basedir, "images" + sfx + '_mask')
     #print('the image dir is:', imgdir)
@@ -138,11 +138,13 @@ def _load_data(basedir, factor=None, width=None, height=None, load_imgs=True):
 
     def imread(f):
         if f.endswith("png"):
+            #return imageio.imread(f, ignoregamma=True)
             return imageio.imread(f, ignoregamma=True)
         else:
             return imageio.imread(f)
     for f in imgfiles:
         print('the file is:', f)
+        #print(imread(f)[..., :3])
     imgs = [imread(f)[..., :3] / 255.0 for f in imgfiles]
     imgs = np.stack(imgs, -1)
 
@@ -403,8 +405,9 @@ def load_llff_data(
     #print(image_sizes.shape)
     #print('the size is:', image_sizes[0][1], image_sizes[0][0])
     i_all = np.arange(num_frame)
+    i_test = np.arange(num_frame)
     i_split = (i_train, i_val, i_test, i_all)
-    print('train', i_train, 'val', i_val, 'test', i_test, 'all', i_all)
+    #print('train', i_train, 'val', i_val, 'test', i_test, 'all', i_all)
 
     if ndc_coord:   # True
         ndc_coeffs = (2 * intrinsics[0, 0, 0] / w, 2 * intrinsics[0, 1, 1] / h)

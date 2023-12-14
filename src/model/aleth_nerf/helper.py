@@ -1,14 +1,3 @@
-# ------------------------------------------------------------------------------------
-# NeRF-Factory
-# Copyright (c) 2022 POSTECH, KAIST, Kakao Brain Corp. All Rights Reserved.
-# Licensed under the Apache License, Version 2.0 [see LICENSE for details]
-# ------------------------------------------------------------------------------------
-# ------------------------------------------------------------------------------------
-# Modified from NeRF (https://github.com/bmild/nerf)
-# Copyright (c) 2020 Google LLC. All Rights Reserved.
-# ------------------------------------------------------------------------------------
-
-
 from calendar import c
 from turtle import forward
 from cv2 import normalize
@@ -16,11 +5,28 @@ import numpy as np
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from torchmetrics import PearsonCorrCoef
 
 # MSE loss for NeRF rendering
 def img2mse(x, y):
     return torch.mean((x - y) ** 2)
+
+# L2 loss function for under & over exposure conditions
+def img2mse_gamma(x, y, gamma=2, type='under'):
+    eta = 1e-4
+    if type == 'under':
+        return torch.mean(((x+eta)**(1/gamma) - (y+eta)**(1/gamma)) ** 2)
+    elif type == 'over':
+        return torch.mean((x**gamma - y**gamma) ** 2)
+
+
+# inverse tone curve MSE loss
+def img2mse_tone(x, y):
+    eta=1e-4
+    # the inverse tone curve, pls refer to paper (Eq.13): 
+    # "https://openaccess.thecvf.com/content/ICCV2021/papers/Cui_Multitask_AET_With_Orthogonal_Tangent_Regularity_for_Dark_Object_Detection_ICCV_2021_paper.pdf"
+    f=lambda x: 0.5 - torch.sin(torch.asin(1.0 - 2.0 * (x+eta)) / 3.0)
+    return torch.mean((f(x) - f(y)) ** 2)
+
 
 # Gray World Colour Constancy
 def colour(x):
@@ -83,14 +89,14 @@ class Exp_loss(nn.Module):
         loss = torch.mean(torch.pow((mean-self.mean_val), 2))
         return loss
 
-# For twilight condition, use this !!! (RAW-NeRF dataset)
 class Exp_loss_global(nn.Module):
-    def __init__(self, patch_size=64, mean_val=0.2):
+    def __init__(self, mean_val=0.5):
         super(Exp_loss_global, self).__init__()
         self.mean_val = mean_val
     
     def forward(self, x):
-        x = torch.mean(x, 1, keepdim=True).permute(2,1,0)
+        #x = torch.mean(x, 1, keepdim=True).permute(2,1,0)
+        x = torch.mean(x,-1,keepdim=True).unsqueeze(-1).permute(2,1,0)
         mean = self.global_average_pool(x)
         loss = torch.pow(torch.mean((mean-self.mean_val)), 2)
         return loss
@@ -144,31 +150,6 @@ def pos_enc(x, min_deg, max_deg):
     return torch.cat([x] + [four_feat], dim=-1)
 
 
-def tensor_linspace(start, end, steps=10):
-    assert start.size() == end.size()
-    view_size = start.size() + (1,)
-    w_size = (1,) * start.dim() + (steps,)
-    out_size = start.size() + (steps,)
-
-    start_w = torch.linspace(1, 0, steps=steps).to(start)
-    start_w = start_w.view(w_size).expand(out_size)
-    end_w = torch.linspace(0, 1, steps=steps).to(start)
-    end_w = end_w.view(w_size).expand(out_size)
-
-    start = start.contiguous().view(view_size).expand(out_size)
-    end = end.contiguous().view(view_size).expand(out_size)
-
-    out = start_w * start + end_w * end
-    return out
-
-def occlusion_field_gen(coarse_dark, fine_dark):
-    c_particle_number, f_particle_number = coarse_dark.shape[0], fine_dark.shape[0]
-    c_mean, f_mean = torch.mean(coarse_dark), torch.mean(fine_dark)
-    
-    return tensor_linspace(c_mean, c_mean/2, steps=c_particle_number).to(coarse_dark.device),\
-           tensor_linspace(f_mean, f_mean/2, steps=f_particle_number).to(fine_dark.device)
-
-
 
 def volumetric_rendering(rgb, density, darkness, t_vals, dirs, mode, 
                         i_level, coarse_dark, fine_dark, white_bkgd):
@@ -183,9 +164,9 @@ def volumetric_rendering(rgb, density, darkness, t_vals, dirs, mode,
         dim=-1,
     )
     dists = dists * torch.norm(dirs[..., None, :], dim=-1)
-    alpha = 1.0 - torch.exp(-density[..., 0] * dists)
+    alpha = 1.0 - torch.exp(-density[..., 0] * dists)   #粒子自身的发光强度，这一项不用变
     
-    # Training Stage
+    # Training Stage with Concealing Field
     if mode != 'test':
         if i_level == 0:
             accum_prod_dark = torch.cat([torch.ones_like(alpha[..., :1] * coarse_dark[0]),
@@ -212,7 +193,6 @@ def volumetric_rendering(rgb, density, darkness, t_vals, dirs, mode,
     
     else:
         return comp_rgb, depth, weights
-
 
 def sorted_piecewise_constant_pdf(
     bins, weights, num_samples, randomized, float_min_eps=2**-32

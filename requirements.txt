@@ -12,7 +12,6 @@ opencv-python
 gin-config
 gdown
 ninja
-functorch
 torch_efficient_distloss
 matplotlib
 tensorboardX

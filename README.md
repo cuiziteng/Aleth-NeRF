@@ -43,7 +43,7 @@ We build the environment follow [NeRF-Factory projcet](https://github.com/kakaob
 
 ```
 1. 
-$ git clone https://github.com/cuiziteng/Aelth-NeRF.git
+$ git clone https://github.com/cuiziteng/Aleth-NeRF.git
 
 $ cd Aleth-NeRF
 

@@ -27,7 +27,7 @@ The standard Neural Radiance Fields (NeRF) paradigm employs a viewer-centered me
 
 
 <div align="center">
-  <img src="./pics/buu.png" height="500">
+  <img src="./pics/buu.png" height="560">
 </div>
 <p align="left">
    We assume objects are naturally visible. However, the Concealing Field attenuates the light in the viewing direction, making the people see a low-light scene. (c). Remove the concealing field, we can render out normal-light images in low-light scenes. (d). Add the concealing field, we can render out normal-light in over-exposure scenes. 
@@ -109,6 +109,12 @@ For low-light conditions:
 
 ```
 $ CUDA_VISIBLE_DEVICES=0,1,2,3 python3 run.py --ginc configs/LOM/aleth_nerf/aleth_nerf_buu.gin --logbase ./logs
+```
+
+You can also adjust the hyper-parameter "con" (contrast degree) and "eta" (enhance degree) to achieve different enhance results, like:
+
+```
+$ CUDA_VISIBLE_DEVICES=0,1,2,3 python3 run.py --ginc configs/LOM/aleth_nerf/aleth_nerf_buu.gin --logbase ./logs --con 12 --eta 0.45
 ```
 
 For over-exposure conditions:

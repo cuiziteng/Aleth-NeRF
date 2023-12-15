@@ -19,7 +19,6 @@ from src.data.litdata import (
     LitDataSingle
 )
 from src.model.dvgo.model import LitDVGO
-from src.model.mipnerf360.model import LitMipNeRF360
 from src.model.mipnerf.model import LitMipNeRF
 from src.model.nerf.model import LitNeRF
 from src.model.nerfpp.model import LitNeRFPP
@@ -45,8 +44,6 @@ def select_model(
         return LitDVGO()
     elif model_name == "refnerf":
         return LitRefNeRF()
-    elif model_name == "mipnerf360":
-        return LitMipNeRF360()
     elif model_name == 'aleth_nerf':
         return LitAleth_NeRF(eta=eta, con=con)
     elif model_name == 'aleth_nerf_exp':

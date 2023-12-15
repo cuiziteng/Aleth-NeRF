@@ -108,25 +108,25 @@ By default, we use 4 GPUs to train Aleth-NeRF on LOM dataset (around **2 hours ~
 For low-light conditions:
 
 ```
-$ CUDA_VISIBLE_DEVICES=0,1,2,3 python3 run.py --ginc configs/LOM/aleth_nerf/aleth_nerf_buu.gin --logbase ./logs
+CUDA_VISIBLE_DEVICES=0,1,2,3 python3 run.py --ginc configs/LOM/aleth_nerf/aleth_nerf_buu.gin --logbase ./logs
 ```
 
 You can also adjust the hyper-parameter "con" (contrast degree) and "eta" (enhance degree) to achieve different enhance results, like:
 
 ```
-$ CUDA_VISIBLE_DEVICES=0,1,2,3 python3 run.py --ginc configs/LOM/aleth_nerf/aleth_nerf_buu.gin --logbase ./logs --con 12 --eta 0.45
+CUDA_VISIBLE_DEVICES=0,1,2,3 python3 run.py --ginc configs/LOM/aleth_nerf/aleth_nerf_buu.gin --logbase ./logs --con 12 --eta 0.45
 ```
 
 For over-exposure conditions:
 
 ```
-$ CUDA_VISIBLE_DEVICES=0,1,2,3 python3 run.py --ginc configs/LOM/aleth_nerf_exp/aleth_nerf_buu.gin --logbase ./logs_exp --con 2
+CUDA_VISIBLE_DEVICES=0,1,2,3 python3 run.py --ginc configs/LOM/aleth_nerf_exp/aleth_nerf_buu.gin --logbase ./logs_exp --con 2
 ```
 
 You can also direct use following command to run all 5 scenes scenes together:
 
 ```
-$ bash run/run_LOM_aleth.sh
+bash run/run_LOM_aleth.sh
 ```
 
 ### (3). Evaluation with pre-train weights
@@ -134,13 +134,13 @@ $ bash run/run_LOM_aleth.sh
 You could also download our pre-train weights for direct model evaluation [(low-light logs, g-drive)](https://drive.google.com/file/d/1uKmeId2wVAYs205c59dK7HYj_ju-NO_z/view?usp=sharing), [(over-exposure logs, g-drive)](https://drive.google.com/file/d/1dcwwBNs5nV8cMMzRLJbLA-4HzmnbO8nY/view?usp=sharing), then unzip the file under this folder ($./logs$), test each scene as follow:
 
 ```
-$ CUDA_VISIBLE_DEVICES=0,1,2,3 python3 run.py --ginc configs/LOM/aleth_nerf/aleth_nerf_buu.gin --logbase ./logs --ginb run.run_train=False
+CUDA_VISIBLE_DEVICES=0,1,2,3 python3 run.py --ginc configs/LOM/aleth_nerf/aleth_nerf_buu.gin --logbase ./logs --ginb run.run_train=False
 ```
 
 if you want to render out videos with novel views, direct add "--ginb run.run_render=True": 
 
 ```
-$ CUDA_VISIBLE_DEVICES=0,1,2,3 python3 run.py --ginc configs/LOM/aleth_nerf/aleth_nerf_buu.gin --logbase ./logs --ginb run.run_train=False --ginb run.run_render=True
+CUDA_VISIBLE_DEVICES=0,1,2,3 python3 run.py --ginc configs/LOM/aleth_nerf/aleth_nerf_buu.gin --logbase ./logs --ginb run.run_train=False --ginb run.run_render=True
 ```
 
 ### (4). Optional: Comparision 2D Enhancement Methods on LOM dataset
@@ -148,13 +148,13 @@ $ CUDA_VISIBLE_DEVICES=0,1,2,3 python3 run.py --ginc configs/LOM/aleth_nerf/alet
 1. Training original NeRF on low-light images, "*buu*" scene training for example:
 
 ```
-$ CUDA_VISIBLE_DEVICES=0,1,2,3 python3 run.py --ginc configs/LOM/nerf/nerf_buu.gin
+CUDA_VISIBLE_DEVICES=0,1,2,3 python3 run.py --ginc configs/LOM/nerf/nerf_buu.gin
 ```
 
 2. Training NeRF on low-light images enhanced by various 2D enhancement methods ([RetiNexNet](https://daooshee.github.io/BMVC2018website/), [Zero-DCE](https://li-chongyi.github.io/Proj_Zero-DCE.html), [SCI](https://openaccess.thecvf.com/content/CVPR2022/papers/Ma_Toward_Fast_Flexible_and_Robust_Low-Light_Image_Enhancement_CVPR_2022_paper.pdf), [IAT](https://bmvc2022.mpi-inf.mpg.de/238/), [MBLLEN](http://bmvc2018.org/contents/papers/0700.pdf), [LLVE](https://openaccess.thecvf.com/content/CVPR2021/html/Zhang_Learning_Temporal_Consistency_for_Low_Light_Video_Enhancement_From_Single_CVPR_2021_paper.html)), "*buu*" scene training for example:
 
 ```
-$ CUDA_VISIBLE_DEVICES=0,1,2,3 python3 run.py --ginc configs/LOM/compare_methods/RetiNexNet(or SCI, IAT zerodce, MBLLEN, LLVE)/nerf_buu.gin
+CUDA_VISIBLE_DEVICES=0,1,2,3 python3 run.py --ginc configs/LOM/compare_methods/RetiNexNet(or SCI, IAT zerodce, MBLLEN, LLVE)/nerf_buu.gin
 ```
 
 <br/>

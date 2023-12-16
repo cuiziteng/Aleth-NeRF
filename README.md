@@ -47,7 +47,7 @@ $ git clone https://github.com/cuiziteng/Aleth-NeRF.git
 $ cd Aleth-NeRF
 
 
-2. (You can adjust to your own torch and CUDA version)
+2. (You can adjust to your own torch>1.8.0 version and CUDA version)
 $ conda create -n aleth_nerf -c anaconda python=3.8
 $ conda activate aleth_nerf
 $ conda install pytorch==1.11.0 torchvision==0.12.0 torchaudio==0.11.0 cudatoolkit=11.3 -c pytorch

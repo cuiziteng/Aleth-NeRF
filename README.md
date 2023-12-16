@@ -39,7 +39,6 @@ The standard Neural Radiance Fields (NeRF) paradigm employs a viewer-centered me
 
 ## Enviroment setup:
 
-We build the environment follow [NeRF-Factory projcet](https://github.com/kakaobrain/nerf-factory):
 
 ```
 1. 

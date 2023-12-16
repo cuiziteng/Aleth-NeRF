@@ -18,11 +18,6 @@
 <br/>
 
 
-**2023.3~7** We propose the first version Aleth-NeRF [(old version)](https://arxiv.org/abs/2303.05807) and rejected by ICCV 2023.
-
-**2023.12** The modified version (this version) has been accepted by **AAAI 2024** !
-
-
 
 ## :house: Abstract
 

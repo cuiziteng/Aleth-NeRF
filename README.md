@@ -143,6 +143,12 @@ if you want to render out videos with novel views, direct add "--ginb run.run_re
 CUDA_VISIBLE_DEVICES=0,1,2,3 python3 run.py --ginc configs/LOM/aleth_nerf/aleth_nerf_buu.gin --logbase ./logs --ginb run.run_train=False --ginb run.run_render=True
 ```
 
+You can also direct use following command to render all 5 scenes scenes together:
+
+```
+bash run/run_LOM_aleth_test.sh
+```
+
 ### (4). Optional: Comparision 2D Enhancement Methods on LOM dataset
 
 1. Training original NeRF on low-light images, "*buu*" scene training for example:

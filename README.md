@@ -1,4 +1,4 @@
-# [AAAI 2024] Aleth-NeRF: Illumination Adaptive NeRF with Concealing Field Assumption [(ArXiv)](https://arxiv.org/abs/2312.09093) [(Website)](https://cuiziteng.github.io/Aleth_NeRF_web/)
+# [AAAI 2024] Aleth-NeRF: Illumination Adaptive NeRF with Concealing Field Assumption [(ArXiv)](https://arxiv.org/abs/2312.09093) [(Website)](https://cuiziteng.github.io/Aleth_NeRF_web/) [(ZhiHu中文解读)](https://zhuanlan.zhihu.com/p/621566180)
 
 [Ziteng Cui<sup>1,2</sup>](https://cuiziteng.github.io/), 
 [Lin Gu<sup>3,1</sup>](https://sites.google.com/view/linguedu/home), 

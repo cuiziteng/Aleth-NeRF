@@ -13,7 +13,7 @@
 
 <br/>
 
-**2024.1.25 :** Update the renewed experimental results and dataset, update the new [arxiv](https://arxiv.org/pdf/2312.09093.pdf) version. We now provide all the comparision results and you can feel free to make comparision on your own research. You can download the experimental results of Aleth-NeRF and comparison methods, 
+**2024.1.25 :** Update the renewed experimental results, dataset and [arxiv](https://arxiv.org/pdf/2312.09093.pdf) version. We now provide all the comparision results and you can feel free to make comparision on your own research. You can download the experimental results of Aleth-NeRF and comparison methods, 
 				**Low-Light-Results** from [(google drive)](https://drive.google.com/file/d/1JzutV7Fi8rdabBDfl3-T53o_cfwdfdjY/view?usp=sharing) or [(baiduyun (passwd: 729w))](https://pan.baidu.com/s/1X-GntkVxYIf9hDaerEHRKg), 
 				and **Over-Exposure Results** from [(google drive)](https://drive.google.com/file/d/11I903qBsLf9B7zqjcV0yjRXd1Ziy3d35/view?usp=sharing) or [(baiduyun (passwd: 6q4k))](https://pan.baidu.com/s/1nsYSzKehUgljqQpJ8qzHCA).
 

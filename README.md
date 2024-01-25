@@ -30,7 +30,7 @@
 
 
 
-## :house: Abstract
+## 🦆: Abstract
 
 
 The standard Neural Radiance Fields (NeRF) paradigm employs a viewer-centered methodology, entangling the aspects of illumination and material reflectance into emission solely from 3D points. This simplified rendering approach presents challenges in accurately modeling images captured under adverse lighting conditions, such as low light or over-exposure. Motivated by the ancient Greek emission theory that posits visual perception as a result of rays emanating from the eyes, we slightly refine the conventional NeRF framework to train NeRF under challenging light conditions and generate normal-light condition novel views unsupervised. We introduce the concept of a ”Concealing Field,” which assigns transmittance values to the surrounding air to account for illumination effects. In dark scenarios, we assume that object emissions maintain a standard lighting level but are attenuated as they traverse the air during the rendering process. Concealing Field thus compel NeRF to learn reasonable density and colour estimations for objects even in dimly lit situations. Similarly, the Concealing Field can mitigate over-exposed emissions during the rendering stage. Furthermore, we present a comprehensive multi-view dataset captured under challenging illumination conditions for evaluation. 
@@ -47,7 +47,7 @@ The standard Neural Radiance Fields (NeRF) paradigm employs a viewer-centered me
 
 <br/>
 
-## ⌨️: Enviroment setup:
+## 🐔: Enviroment setup:
 
 
 ```
@@ -68,7 +68,7 @@ $ pip3 install -r requirements.txt
 
 <br/>
 
-## Usage:
+## 🦜: Usage:
 
 ### (1). Proposed dataset
 
@@ -225,13 +225,13 @@ CUDA_VISIBLE_DEVICES=0,1,2,3 python3 run.py --ginc configs/LOM/compare_methods/R
 
 <br/>
 
-## Others:
+## 🐤: Others:
 
 If you want to editing the code or find out details of Aleth-NeRF, direct refer to [model.py](src/model/aleth_nerf/model.py) and [helper.py](src/model/nerf/helper.py).
 
 <br/>
 
-## Reference and Related Works:
+## 🦉: Reference and Related Works:
 
 **Acknowledgement:**
 

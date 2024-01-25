@@ -203,7 +203,7 @@ logs
 ```
 
 <div align="center">
-  <img src="./pics/LOM_overexp.jpg" height="300">
+  <img src="./pics/LOM_overexp.jpg" height="400">
 </div>
 <p align="center">
    LOM dataset over-exposure benchmark.

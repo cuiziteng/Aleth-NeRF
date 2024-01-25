@@ -1,6 +1,6 @@
 # [AAAI 2024] Aleth-NeRF: Illumination Adaptive NeRF with Concealing Field Assumption 
 
-# [(ArXiv)](https://arxiv.org/abs/2312.09093) [(Website)](https://cuiziteng.github.io/Aleth_NeRF_web/) [(Dataset)](https://drive.google.com/file/d/1Fhe4UZ4aIgiMHiVzizvvqWukLkefygmL/view?usp=sharing) [(ZhiHu中文解读)](https://zhuanlan.zhihu.com/p/621566180)
+# [(ArXiv)](https://arxiv.org/abs/2312.09093) [(Website)](https://cuiziteng.github.io/Aleth_NeRF_web/) [(Dataset)](https://drive.google.com/file/d/1orgKEGApjwCm6G8xaupwHKxMbT2s9IAG/view?usp=sharing) [(ZhiHu中文解读)](https://zhuanlan.zhihu.com/p/621566180)
 
 [Ziteng Cui<sup>1,2</sup>](https://cuiziteng.github.io/), 
 [Lin Gu<sup>3,1</sup>](https://sites.google.com/view/linguedu/home), 
@@ -10,6 +10,15 @@
 [Tatsuya Harada<sup>1,3</sup>](https://www.mi.t.u-tokyo.ac.jp/harada/). 
 
 <sup>1.</sup>The University of Tokyo, <sup>2.</sup>Shanghai AI Lab, <sup>3.</sup>RIKEN AIP, <sup>4.</sup>University of Oxford
+
+<br/>
+
+**2024.1.25 :** Update the renewed experimental results and dataset, update the new [arxiv](https://arxiv.org/pdf/2312.09093.pdf) version. We now provide all the comparision results and you can feel free to make comparision on your own research. You can download the experimental results of Aleth-NeRF and comparison methods, 
+				**Low-Light-Results** from [(google drive)](https://drive.google.com/file/d/1JzutV7Fi8rdabBDfl3-T53o_cfwdfdjY/view?usp=sharing) or [(baiduyun (passwd: 729w))](https://pan.baidu.com/s/1X-GntkVxYIf9hDaerEHRKg), 
+				and **Over-Exposure Results** from [(google drive)](https://drive.google.com/file/d/11I903qBsLf9B7zqjcV0yjRXd1Ziy3d35/view?usp=sharing) or [(baiduyun (passwd: 6q4k))](https://pan.baidu.com/s/1nsYSzKehUgljqQpJ8qzHCA).
+
+<br/>
+
 
 <br/>
 

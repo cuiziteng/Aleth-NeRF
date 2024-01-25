@@ -88,13 +88,17 @@ data
         │─── high (normal-light images)
         │─── low  (low-light images)
         │─── over_exp  (over-exposure images)
-        │─── Low_light_enhance (if you need for comparision)
+
+        │─── Low_light_enhance (low-light images enhanced by 2D enhance methods)
             │─── enh_RetiNexNet (enhanced by [RetiNexNet, BMVC 2018])
             │─── enh_zerodce (enhanced by [Zero-DCE, CVPR 2020])
             │─── enh_SCI (enhanced by [SCI, CVPR 2022])
             │─── enh_IAT (enhanced by [IAT, BMVC 2022])
             │─── enh_MBLLEN (enhanced by video enhance method [MBLLEN, BMVC 2018])
             │─── enh_LLVE (enhanced by video enhance method [LLVE, CVPR 2021])
+
+        │─── Exposure_correction (over-exp images corrected by 2D exposure correction methods)
+
         │─── colamp.db
         │─── transforms_test.json (test scenes)
         │─── transforms_train.json (train scenes)

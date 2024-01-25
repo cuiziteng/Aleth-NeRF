@@ -209,17 +209,19 @@ logs
    LOM dataset over-exposure benchmark.
 </p>
 
-1. Training original NeRF on low-light images, "*buu*" scene training for example:
+Then you can evlaution with our pre-train weights.
+
+For basic NeRF methods:
 
 ```
-CUDA_VISIBLE_DEVICES=0,1,2,3 python3 run.py --ginc configs/LOM/nerf/nerf_buu.gin
+CUDA_VISIBLE_DEVICES=0,1,2,3 python3 run.py --ginc configs/LOM/nerf/nerf_buu.gin --ginb run.run_train=False
 ```
 
-2. Training NeRF on low-light images enhanced by various 2D enhancement methods ([RetiNexNet](https://daooshee.github.io/BMVC2018website/), [Zero-DCE](https://li-chongyi.github.io/Proj_Zero-DCE.html), [SCI](https://openaccess.thecvf.com/content/CVPR2022/papers/Ma_Toward_Fast_Flexible_and_Robust_Low-Light_Image_Enhancement_CVPR_2022_paper.pdf), [IAT](https://bmvc2022.mpi-inf.mpg.de/238/), [MBLLEN](http://bmvc2018.org/contents/papers/0700.pdf), [LLVE](https://openaccess.thecvf.com/content/CVPR2021/html/Zhang_Learning_Temporal_Consistency_for_Low_Light_Video_Enhancement_From_Single_CVPR_2021_paper.html)), "*buu*" scene training for example:
+For NeRF trained on enhanced images:
+```
+CUDA_VISIBLE_DEVICES=0,1,2,3 python3 run.py --ginc configs/LOM/compare_methods/RetiNexNet/nerf_buu.gin --ginb run.run_train=False
+```
 
-```
-CUDA_VISIBLE_DEVICES=0,1,2,3 python3 run.py --ginc configs/LOM/compare_methods/RetiNexNet(or SCI, IAT, zerodce, MBLLEN, LLVE)/nerf_buu.gin
-```
 
 <br/>
 

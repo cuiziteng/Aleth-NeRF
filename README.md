@@ -165,7 +165,11 @@ You can also direct use following command to render all 5 scenes scenes together
 bash run/run_LOM_aleth_test.sh
 ```
 
-### (4). Optional: Comparision 2D Enhancement Methods on LOM dataset
+### (4). Comparision 2D Enhancement Methods on LOM dataset
+
+All the comparision methods' weights and experimental results could be downloaded, **Low-Light-Results** from [(google drive)](https://drive.google.com/file/d/1JzutV7Fi8rdabBDfl3-T53o_cfwdfdjY/view?usp=sharing) or [(baiduyun (passwd: 729w))](https://pan.baidu.com/s/1X-GntkVxYIf9hDaerEHRKg), and **Over-Exposure Results** from [(google drive)](https://drive.google.com/file/d/11I903qBsLf9B7zqjcV0yjRXd1Ziy3d35/view?usp=sharing) or [(baiduyun (passwd: 6q4k))](https://pan.baidu.com/s/1nsYSzKehUgljqQpJ8qzHCA). We formulate the comparision results as follow:
+
+
 
 1. Training original NeRF on low-light images, "*buu*" scene training for example:
 

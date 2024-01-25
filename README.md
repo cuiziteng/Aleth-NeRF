@@ -150,13 +150,13 @@ bash run/run_LOM_aleth.sh
 You could also download our pre-train weights for direct model evaluation **Low-Light-Results** from [(google drive)](https://drive.google.com/file/d/1JzutV7Fi8rdabBDfl3-T53o_cfwdfdjY/view?usp=sharing) or [(baiduyun (passwd: 729w))](https://pan.baidu.com/s/1X-GntkVxYIf9hDaerEHRKg), and **Over-Exposure Results** from [(google drive)](https://drive.google.com/file/d/11I903qBsLf9B7zqjcV0yjRXd1Ziy3d35/view?usp=sharing) or [(baiduyun (passwd: 6q4k))](https://pan.baidu.com/s/1nsYSzKehUgljqQpJ8qzHCA), then unzip the file under this folder ($./logs$), test each scene as follow:
 
 ```
-CUDA_VISIBLE_DEVICES=0,1,2,3 python3 run.py --ginc configs/LOM/aleth_nerf/aleth_nerf_buu.gin --logbase ./logs --ginb run.run_train=False
+CUDA_VISIBLE_DEVICES=0,1,2,3 python3 run.py --ginc configs/LOM/aleth_nerf/aleth_nerf_buu.gin --con 12 --eta 0.45 --logbase ./logs --ginb run.run_train=False
 ```
 
 if you want to render out videos with novel views, direct add "--ginb run.run_render=True": 
 
 ```
-CUDA_VISIBLE_DEVICES=0,1,2,3 python3 run.py --ginc configs/LOM/aleth_nerf/aleth_nerf_buu.gin --logbase ./logs --ginb run.run_train=False --ginb run.run_render=True
+CUDA_VISIBLE_DEVICES=0,1,2,3 python3 run.py --ginc configs/LOM/aleth_nerf/aleth_nerf_buu.gin --con 12 --eta 0.45 --logbase ./logs --ginb run.run_train=False --ginb run.run_render=True
 ```
 
 You can also direct use following command to render all 5 scenes scenes together:

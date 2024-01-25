@@ -187,7 +187,7 @@ logs
   <img src="./pics/LOM_lowlight.jpg">
 </div>
 <p align="center">
-   **LOM dataset low-light benchmark.**
+   ## LOM dataset low-light benchmark ##
 </p>
 
 **Over-Exposure-Results** :
@@ -206,7 +206,7 @@ logs
   <img src="./pics/LOM_overexp.jpg">
 </div>
 <p align="center">
-   **LOM dataset over-exposure benchmark.**
+   ## LOM dataset over-exposure benchmark ##
 </p>
 
 Then you can evlaution with our pre-train weights.

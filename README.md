@@ -98,6 +98,9 @@ data
             │─── enh_LLVE (enhanced by video enhance method [LLVE, CVPR 2021])
 
         │─── Exposure_correction (over-exp images corrected by 2D exposure correction methods)
+            │─── HE (corrected by Histogram Equlization)
+            │─── IAT (corrected by [IAT, BMVC 2022])
+            │─── MSEC (corrected by [MSEC, CVPR 2021])
 
         │─── colamp.db
         │─── transforms_test.json (test scenes)
@@ -118,22 +121,22 @@ data
 
 By default, we use 4 GPUs to train Aleth-NeRF on LOM dataset (around **2 hours ~ 2.5 hours** per scene), you can feel free to set other GPU number or GPU id depend on your own device. We take "*buu*" scene training for example:
 
-For low-light conditions:
-
-```
-CUDA_VISIBLE_DEVICES=0,1,2,3 python3 run.py --ginc configs/LOM/aleth_nerf/aleth_nerf_buu.gin --logbase ./logs
-```
-
-You can also adjust the hyper-parameter "con" (contrast degree) and "eta" (enhance degree) to achieve different enhance results, like:
+For low-light conditions, we default set con = 12 and eta = 0.45 (Table.2's results):
 
 ```
 CUDA_VISIBLE_DEVICES=0,1,2,3 python3 run.py --ginc configs/LOM/aleth_nerf/aleth_nerf_buu.gin --logbase ./logs --con 12 --eta 0.45
 ```
 
-For over-exposure conditions:
+You can also adjust the hyper-parameter "con" (contrast degree) and "eta" (enhance degree) to achieve different enhance results, like:
 
 ```
-CUDA_VISIBLE_DEVICES=0,1,2,3 python3 run.py --ginc configs/LOM/aleth_nerf_exp/aleth_nerf_buu.gin --logbase ./logs_exp --con 2
+CUDA_VISIBLE_DEVICES=0,1,2,3 python3 run.py --ginc configs/LOM/aleth_nerf/aleth_nerf_buu.gin --logbase ./logs --con 10/12/15 --eta 0.4/0.45/0.5
+```
+
+For over-exposure conditions, we default set con = 1 and eta = 0.45 (Table.3's results):
+
+```
+CUDA_VISIBLE_DEVICES=0,1,2,3 python3 run.py --ginc configs/LOM/aleth_nerf_exp/aleth_nerf_buu.gin --logbase ./logs_exp --con 1 --eta 0.45
 ```
 
 You can also direct use following command to run all 5 scenes scenes together:
@@ -144,7 +147,7 @@ bash run/run_LOM_aleth.sh
 
 ### (3). Evaluation with pre-train weights
 
-You could also download our pre-train weights for direct model evaluation [(low-light logs, g-drive)](https://drive.google.com/file/d/1uKmeId2wVAYs205c59dK7HYj_ju-NO_z/view?usp=sharing), [(over-exposure logs, g-drive)](https://drive.google.com/file/d/1dcwwBNs5nV8cMMzRLJbLA-4HzmnbO8nY/view?usp=sharing), then unzip the file under this folder ($./logs$), test each scene as follow:
+You could also download our pre-train weights for direct model evaluation **Low-Light-Results** from [(google drive)](https://drive.google.com/file/d/1JzutV7Fi8rdabBDfl3-T53o_cfwdfdjY/view?usp=sharing) or [(baiduyun (passwd: 729w))](https://pan.baidu.com/s/1X-GntkVxYIf9hDaerEHRKg), and **Over-Exposure Results** from [(google drive)](https://drive.google.com/file/d/11I903qBsLf9B7zqjcV0yjRXd1Ziy3d35/view?usp=sharing) or [(baiduyun (passwd: 6q4k))](https://pan.baidu.com/s/1nsYSzKehUgljqQpJ8qzHCA), then unzip the file under this folder ($./logs$), test each scene as follow:
 
 ```
 CUDA_VISIBLE_DEVICES=0,1,2,3 python3 run.py --ginc configs/LOM/aleth_nerf/aleth_nerf_buu.gin --logbase ./logs --ginb run.run_train=False

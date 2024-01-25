@@ -229,6 +229,8 @@ CUDA_VISIBLE_DEVICES=0,1,2,3 python3 run.py --ginc configs/LOM/compare_methods/R
 
 If you want to editing the code or find out details of Aleth-NeRF, direct refer to [model.py](src/model/aleth_nerf/model.py) and [helper.py](src/model/nerf/helper.py).
 
+For the angle control to render a video in LOM dataset, please refer to [here](https://github.com/cuiziteng/Aleth-NeRF/blob/758060c3cbd1d37fa6406c542f2a0f9b82fd52df/src/data/data_util/blender.py#L126).
+
 <br/>
 
 ## 🦉: Reference and Related Works:

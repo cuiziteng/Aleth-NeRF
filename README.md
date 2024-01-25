@@ -186,7 +186,7 @@ logs
 <div align="center">
   <img src="./pics/LOM_lowlight.jpg" height="500">
 </div>
-<p align="left">
+<p align="center">
    LOM dataset low-light benchmark.
 </p>
 
@@ -203,9 +203,9 @@ logs
 ```
 
 <div align="center">
-  <img src="./pics/LOM_overexp.jpg" height="500">
+  <img src="./pics/LOM_overexp.jpg" height="300">
 </div>
-<p align="left">
+<p align="center">
    LOM dataset over-exposure benchmark.
 </p>
 

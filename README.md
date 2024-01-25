@@ -172,8 +172,7 @@ All the comparision methods' weights and experimental results could be downloade
 **Low-Light-Results** :
 ```
 logs    
-└───
-    LOM_full      
+└───    
     └─── Aleth-NeRF (Aleth-NeRF results with various ablation)
     └─── NeRF (NeRF results and "NeRF + 2D enhance methods" Results)
     └─── RetiNexNet (RetiNexNet + NeRF)
@@ -185,13 +184,30 @@ logs
 ```
 
 <div align="center">
-  <img src=".pics/LOM_lowlight.jpg" height="500">
+  <img src="./pics/LOM_lowlight.jpg" height="500">
 </div>
 <p align="left">
    LOM dataset low-light benchmark.
 </p>
 
+**Over-Exposure-Results** :
 
+```
+logs    
+└───     
+    └─── Aleth-NeRF (Aleth-NeRF results)
+    └─── NeRF (NeRF results and "NeRF + 2D exposure correction" Results)
+    └─── HE (Histogram Equlization + NeRF)
+    └─── IAT (IAT + NeRF)
+    └─── MSEC (MSEC + NeRF)
+```
+
+<div align="center">
+  <img src="./pics/LOM_overexp.jpg" height="500">
+</div>
+<p align="left">
+   LOM dataset over-exposure benchmark.
+</p>
 
 1. Training original NeRF on low-light images, "*buu*" scene training for example:
 

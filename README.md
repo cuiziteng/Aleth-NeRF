@@ -47,7 +47,7 @@ The standard Neural Radiance Fields (NeRF) paradigm employs a viewer-centered me
 
 <br/>
 
-## :house: Enviroment setup:
+## ⌨️: Enviroment setup:
 
 
 ```

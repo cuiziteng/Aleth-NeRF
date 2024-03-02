@@ -18,7 +18,7 @@
 				and **Over-Exposure Results** from [(google drive)](https://drive.google.com/file/d/11I903qBsLf9B7zqjcV0yjRXd1Ziy3d35/view?usp=sharing) or [(baiduyun (passwd: 6q4k))](https://pan.baidu.com/s/1nsYSzKehUgljqQpJ8qzHCA).
 
 
-**2024.12.9 :** Paper accepted by **AAAI 2024** !
+**2023.12.9 :** Paper accepted by **AAAI 2024** !
 
 <br/>
 

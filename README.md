@@ -250,6 +250,15 @@ Code is based on [NeRF-Factory](https://github.com/kakaobrain/nerf-factory), muc
   booktitle={Proceedings of the AAAI Conference on Artificial Intelligence},
   year={2024}
 }
+
+@misc{cui2023alethnerf,
+      title={Aleth-NeRF: Low-light Condition View Synthesis with Concealing Fields}, 
+      author={Ziteng Cui and Lin Gu and Xiao Sun and Xianzheng Ma and Yu Qiao and Tatsuya Harada},
+      year={2023},
+      eprint={2303.05807},
+      archivePrefix={arXiv},
+      primaryClass={cs.CV}
+}
 ```
 
 

@@ -18,7 +18,7 @@
 				and **Over-Exposure Results** from [(google drive)](https://drive.google.com/file/d/11I903qBsLf9B7zqjcV0yjRXd1Ziy3d35/view?usp=sharing) or [(baiduyun (passwd: 6q4k))](https://pan.baidu.com/s/1nsYSzKehUgljqQpJ8qzHCA).
 
 
-**2023.12.9 :** Paper accepted by **AAAI 2024** !
+**2023.12.9 :** Paper accepted by **AAAI 2024** ! The [old version](https://arxiv.org/abs/2303.05807) of our paper is invalid, please refer to the [new version](https://arxiv.org/abs/2312.09093), thanks~ 
 
 <br/>
 

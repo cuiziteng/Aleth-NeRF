@@ -22,9 +22,10 @@ def img2mse_gamma(x, y, gamma=2, type='under'):
 # inverse tone curve MSE loss
 def img2mse_tone(x, y):
     eta=1e-4
+    x = torch.clip(x, min = eta, max = 1-eta)
     # the inverse tone curve, pls refer to paper (Eq.13): 
     # "https://openaccess.thecvf.com/content/ICCV2021/papers/Cui_Multitask_AET_With_Orthogonal_Tangent_Regularity_for_Dark_Object_Detection_ICCV_2021_paper.pdf"
-    f=lambda x: 0.5 - torch.sin(torch.asin(1.0 - 2.0 * (x+eta)) / 3.0)
+    f=lambda x: 0.5 - torch.sin(torch.asin(1.0 - 2.0 * x) / 3.0)
     return torch.mean((f(x) - f(y)) ** 2)
 
 

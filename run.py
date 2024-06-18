@@ -49,8 +49,8 @@ def run(
     postfix: Optional[str] = None,
     entity: Optional[str] = None,
     # Hyper Parameter in Aleth-NeRF
-    con: float = 10,    # set here to 2 for over-exposure conditions
-    eta: float = 0.4,
+    con: float = 12,    # set here to 2 for over-exposure conditions
+    eta: float = 0.45,
     # Optimization
     max_steps: int = -1,
     max_epochs: int = -1,

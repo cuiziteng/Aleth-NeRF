@@ -31,7 +31,20 @@
 
 <br/>
 
+## 🦉: Reference and Related Works:
 
+**Acknowledgement:**
+
+Code is based on [NeRF-Factory](https://github.com/kakaobrain/nerf-factory), much thanks to their excellent codebase! Also if you use our dataset or our code & paper help you, please consider cite our AAAI version:
+
+```
+@inproceedings{cui_aleth_nerf,
+  title={Aleth-NeRF: Illumination Adaptive NeRF with Concealing Field Assumption},
+  author={Cui, Ziteng and Gu, Lin and Sun, Xiao and Ma, Xianzheng and Qiao, Yu and Harada, Tatsuya},
+  booktitle={Proceedings of the AAAI Conference on Artificial Intelligence},
+  year={2024}
+}
+```
 
 ## 🦆: Abstract
 
@@ -237,29 +250,7 @@ For the angle control to render a video in LOM dataset, please refer to [here](h
 
 <br/>
 
-## 🦉: Reference and Related Works:
 
-**Acknowledgement:**
-
-Code is based on [NeRF-Factory](https://github.com/kakaobrain/nerf-factory), much thanks to their excellent codebase! Also if you use our dataset or our code & paper help you, please consider cite our work:
-
-```
-@inproceedings{cui_aleth_nerf,
-  title={Aleth-NeRF: Illumination Adaptive NeRF with Concealing Field Assumption},
-  author={Cui, Ziteng and Gu, Lin and Sun, Xiao and Ma, Xianzheng and Qiao, Yu and Harada, Tatsuya},
-  booktitle={Proceedings of the AAAI Conference on Artificial Intelligence},
-  year={2024}
-}
-
-@misc{cui2023alethnerf,
-      title={Aleth-NeRF: Low-light Condition View Synthesis with Concealing Fields}, 
-      author={Ziteng Cui and Lin Gu and Xiao Sun and Xianzheng Ma and Yu Qiao and Tatsuya Harada},
-      year={2023},
-      eprint={2303.05807},
-      archivePrefix={arXiv},
-      primaryClass={cs.CV}
-}
-```
 
 
 

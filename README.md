@@ -13,7 +13,7 @@
 
 <br/>
 
-**2025.2.27 :** Our new work (**Luminance-GS**)[https://github.com/cuiziteng/Luminance-GS] has been accepted by CVPR 2025 !
+**2025.2.27 :** Our new work [**Luminance-GS**](https://github.com/cuiziteng/Luminance-GS) has been accepted by CVPR 2025 !
 
 **2024.1.25 :** Update the renewed experimental results, dataset and [arxiv](https://arxiv.org/pdf/2312.09093.pdf) version. We now provide all the comparision results and you can feel free to make comparision on your own research. You can download the experimental results of Aleth-NeRF and comparison methods, 
 				**Low-Light-Results** from [(google drive)](https://drive.google.com/file/d/1JzutV7Fi8rdabBDfl3-T53o_cfwdfdjY/view?usp=sharing) or [(baiduyun (passwd: 729w))](https://pan.baidu.com/s/1X-GntkVxYIf9hDaerEHRKg), 
